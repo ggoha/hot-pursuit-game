@@ -59,12 +59,10 @@ public:
 	Coordinates getPosition( void );
 	void move( int, Size );
 	Coordinates getPreviousPosition( void );
-	bool wasFirstStep();
-	bool wasSecondStep();
-	void makeFirstStep();
-	void makeSecondStep();
-	bool directionIsValid( int direction, const Size& size );
+	bool directionIsValid( const Size& size );
 	bool playerIsAlive();
+	bool playerMoved();
+	void setPlayerMoved();
 
 private:
 	Coordinates position;
@@ -73,8 +71,7 @@ private:
 	Coordinates previous_position;
 	void moveInDirection( Coordinates );
 	bool isAlive;
-	bool firstStep;
-	bool secondStep;
+	bool moved;
 	Coordinates convertFromDirectionCode( int );
 };
 

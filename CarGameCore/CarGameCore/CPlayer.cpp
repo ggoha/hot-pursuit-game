@@ -5,8 +5,7 @@ Player::Player()
 	isAlive = true;
 	inertia.x = 0;
 	inertia.y = 0;
-	firstStep = true;
-	secondStep = true;
+	moved = false;
 }
 
 Player::Player( const Coordinates& newCoordinates, const bool state ) :
@@ -14,8 +13,7 @@ Player::Player( const Coordinates& newCoordinates, const bool state ) :
 {
 	inertia.x = 0;
 	inertia.y = 0;
-	firstStep = true;
-	secondStep = true;
+	moved = false;
 }
 
 Player::~Player()
@@ -33,8 +31,7 @@ void Player::goToStart()
 	this->previous_position = this->initial_position;
 	this->inertia.x = 0;
 	this->inertia.y = 0;
-	this->firstStep = true;
-	this->secondStep = true;
+	moved = false;
 };
 
 Coordinates Player::convertFromDirectionCode( int directionCode )
@@ -105,14 +102,6 @@ void Player::moveInDirection( Coordinates direction )
 
 	this->position.x = this->position.x + move.x;
 	this->position.y = this->position.y + move.y;
-
-
-	//std::tr1::shared_ptr<Coordinates> result = std::tr1::make_shared(
-	//        move,   splain)
-	//        pure_inertial
-	//);
-
-//return result;
 }
 
 Coordinates Player::getPreviousPosition()
@@ -125,31 +114,10 @@ void Player::die()
 	isAlive = false;
 };
 
-bool Player::wasFirstStep()
+bool Player::directionIsValid( const Size& size )
 {
-	return firstStep;
-}
-
-bool Player::wasSecondStep()
-{
-	return secondStep;
-}
-
-void Player::makeFirstStep()
-{
-	firstStep = false;
-}
-
-void Player::makeSecondStep()
-{
-	secondStep = false;
-}
-
-bool Player::directionIsValid( int directionCode, const Size& size )
-{
-	Coordinates direction = convertFromDirectionCode( directionCode );
-	if( 0 <= ( direction + position + inertia ).x && ( direction + position + inertia ).x <= size.first - 1 &&
-		0 <= ( direction + position + inertia ).y && ( direction + position + inertia ).y <= size.second - 1 ) {
+	if( 0 <= position.x && position.x <= size.first - 1 &&
+		0 <= position.y && position.y <= size.second - 1 ) {
 		return true;
 	} else {
 		return false;
@@ -159,4 +127,14 @@ bool Player::directionIsValid( int directionCode, const Size& size )
 bool Player::playerIsAlive()
 {
 	return isAlive;
+}
+
+bool Player::playerMoved()
+{
+	return moved;
+}
+
+void Player::setPlayerMoved()
+{
+	moved = true;
 }

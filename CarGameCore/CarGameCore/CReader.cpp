@@ -93,7 +93,7 @@ int Reader::readPlayersChoice( size_t num )
 
 Line Reader::readLine()
 {
-	std::cout << "Enter coordinates of startline:" << std::endl;
+	std::cout << "Enter coordinates of line:" << std::endl;
 	Coordinates firstPoint = readCoordinates(),
 		secondPoint = readCoordinates();
 

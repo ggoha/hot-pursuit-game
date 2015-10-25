@@ -5,8 +5,8 @@ Game::Game()
 	numOfDeadPlayers = 0;
 }
 
-Game::Game( const Map& newMap, const PlayersInfo& newPlayersInfo, const Line& newStartLine, const Reader& newReader ) :
-	map( newMap ), reader( newReader ), startLine( newStartLine )
+Game::Game( const Map& newMap, const PlayersInfo& newPlayersInfo, const Line& newStartLine, const Line& newFinishLine, const Reader& newReader ) :
+	map( newMap ), reader( newReader ), startLine( newStartLine ), finishLine( newFinishLine )
 {
 	numOfDeadPlayers = 0;
 	size_t numOfPlayers = newPlayersInfo.numberOfPlayers;
@@ -47,32 +47,23 @@ bool isIntersects( Coordinates& firstPoint, Coordinates& secondPoint, Coordinate
 			 * area( thirdPoint, fourthPoint, secondPoint ) ) <= 0;
 }
 
-bool Game::startLineIntersectsWithPlayer( size_t num )
+bool Game::finishLineIntersectsWithPlayer( size_t num )
 {
 	// Происходит проверка:
 	// 1. Проекции отрезков на оси пересекаются
 	// 2. Считается ориентированная площадь треугольников. Нужно, чтобы эти площади были разных знаков.
 	Coordinates playersPreviousCoordinates = players[num].getPreviousPosition();
 	Coordinates playersCoordinates = players[num].getPosition();
-	return isIntersects( playersPreviousCoordinates, playersCoordinates, startLine.firstPoint, startLine.secondPoint );
+	return isIntersects( playersPreviousCoordinates, playersCoordinates, finishLine.firstPoint, finishLine.secondPoint );
 }
 
 int Game::getPlayerOnFinish()
 {
 	for( size_t i = 0; i < players.size(); ++i ) {
-		/* todo: */
-		bool begining = players[i].wasFirstStep();
-		bool second = players[i].wasSecondStep();
-		if( begining ) { // Чтобы избавиться от ситуации, когда траектория на первом и втором ходу пересекается со стартом
-			players[i].makeFirstStep();
+		if( !players[i].playerMoved() ) {
 			continue;
 		}
-		if( second ) {
-			players[i].makeSecondStep();
-			continue;
-		}
-		/* заменить на проверку, что игрок подъезжает к финишу с правильной стороны */
-		if( startLineIntersectsWithPlayer( i ) ) {
+		if( finishLineIntersectsWithPlayer( i ) ) {
 			return ( int ) i;
 		}
 	}
@@ -126,21 +117,27 @@ bool Game::playerOutOfTrack( size_t num )
 void Game::turnOfPlayer( size_t num )
 {
 	int direction = reader.readPlayersChoice( num );
-	if( !players[num].directionIsValid( direction, map.getSize() ) ) { // todo:refactoring in function
+
+	players[num].move( direction, map.getSize() );
+	if( !players[num].playerMoved()
+		&& !finishLineIntersectsWithPlayer( num ) ) {
+		players[num].setPlayerMoved();
+	}
+
+	if( !players[num].directionIsValid( map.getSize() ) && !finishLineIntersectsWithPlayer( num ) ) {
+		// Смысл: если на скорости пересек финиш и выехал за пределы поля ЗА финишом - считается, что победил
 		players[num].die();
 		++numOfDeadPlayers;
 		std::cout << "Player " << num + 1 << " is dead" << std::endl;
 		return;
 	}
 
-	players[num].move( direction, map.getSize() );
-
 	int crashedPlayer = playerCrashedIntoCar( num );
 	if( crashedPlayer != -1 ) {
 		players[num].goToStart();
 		clearPlayersState( crashedPlayer );
 		players[crashedPlayer].goToStart();
-		paintPlayersState( crashedPlayer );
+		showPlayersState( crashedPlayer );
 		return;
 	}
 	if( playerOutOfTrack( num ) ) {
@@ -167,7 +164,7 @@ void Game::clearPlayersState( size_t num ) // Стирает изображен�
 	map.clearPosition( now.x, now.y );
 }
 
-void Game::paintPlayersState( size_t num ) // Рисует изображение игрока на поле
+void Game::showPlayersState( size_t num ) // Рисует изображение игрока на поле
 {
 	Coordinates previousCoordinates = players[num].getPreviousPosition();
 	Coordinates currentCoordinates = players[num].getPosition();
@@ -184,9 +181,9 @@ void Game::start()
 		for( size_t i = 0; i < players.size(); ++i ) {
 			if( players[i].playerIsAlive() ) {
 				clearPlayersState( i );
-				turnOfPlayer( i ); // AI: Если будет AI, здесь он запускается (перед этим, занести его в players[])
-				paintPlayersState( i );
-				map.print();  // Вывод поля на консоль
+				turnOfPlayer( i ); // todo: AI: занести его в players[] и с помощью API получать следующих ход(см документацию) 
+				showPlayersState( i );
+				map.print(); // Вывод поля на консоль
 			}
 		}
 		if( numOfDeadPlayers == players.size() ) {

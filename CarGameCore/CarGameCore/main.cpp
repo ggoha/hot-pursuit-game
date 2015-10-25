@@ -9,8 +9,9 @@ int main()
 	try {
 		Map newMap( reader.readMap( MAP_PATH ) );
 		Line startLine = reader.readLine();
+		Line finishLine = reader.readLine();
 		PlayersInfo newPlayersInfo = reader.readPlayers();
-		Game newGame( newMap, newPlayersInfo, startLine, reader );
+		Game newGame( newMap, newPlayersInfo, startLine, finishLine, reader );
 		newGame.start();
 	} catch( std::exception const &e ) {
 		std::cerr << e.what() << std::endl;
