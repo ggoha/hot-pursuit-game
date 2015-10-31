@@ -5,15 +5,9 @@ Game::Game()
 	numOfDeadPlayers = 0;
 }
 
-Game::Game( const Map& newMap, const PlayersInfo& newPlayersInfo, const Line& newStartLine, const Line& newFinishLine, const Reader& newReader ) :
-	map( newMap ), reader( newReader ), startLine( newStartLine ), finishLine( newFinishLine )
+Game::Game( const Map& newMap, const Line& newLine, const Reader& newReader, const std::vector<Coordinates>& coordinates ) :
+	map( newMap ), reader( newReader ), finishLine( newLine ), startCoordinates( coordinates ), numOfDeadPlayers( 0 )
 {
-	numOfDeadPlayers = 0;
-	size_t numOfPlayers = newPlayersInfo.numberOfPlayers;
-	for( size_t i = 0; i < numOfPlayers; ++i ) {
-		Player newPlayer( newPlayersInfo.positions[i], true );
-		players.push_back( newPlayer );
-	}
 }
 
 Game::~Game()
@@ -172,11 +166,18 @@ void Game::showPlayersState( size_t num ) // Рисует изображение
 	map.setPosition( currentCoordinates.x, currentCoordinates.y );
 }
 
+
+void Game::initPlayers( const PlayersInfo& playersInfo )
+{
+
+}
+
 void Game::start()
 {
+	initPlayers( reader.readPlayers() ); // TODO
+	initPlayersPositionsInMap(); // На карте проставляются координаты машинок
 	std::cout << "Game has been started. Gl hf!" << std::endl;
 	int player;
-	initPlayersPositionsInMap(); // На карте проставляются координаты машинок
 	while( ( player = getPlayerOnFinish() ) == -1 ) { // -1 - никто пока к финишу не пришел
 		for( size_t i = 0; i < players.size(); ++i ) {
 			if( players[i].playerIsAlive() ) {

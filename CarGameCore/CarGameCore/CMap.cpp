@@ -6,11 +6,9 @@ Map::Map()
 	size.second = 0;
 }
 
-Map::Map( const Field& newMap ) :
-	map( newMap )
+Map::Map( const Size& newSize, const Field& newMap ) :
+	size( newSize ), map( newMap )
 {
-	size.first = newMap[0].size();
-	size.second = newMap.size();
 }
 
 Map::~Map()
@@ -42,6 +40,7 @@ Size Map::getSize()
 	return this->size;
 }
 
-bool Map::isEmpty(int i, int j) {
+bool Map::isEmpty( int i, int j )
+{
 	return ( map[j][i] != 1 );
 }

@@ -24,7 +24,7 @@ class Game {
 public:
 	Game();
 
-	Game( const Map& map, const PlayersInfo& playersInfo, const Line& startLine, const Line& finishLine, const Reader& reader );
+	Game( const Map& map, const Line& finishLine, const Reader& reader, const std::vector<Coordinates>& coordinates );
 
 	~Game();
 
@@ -38,9 +38,10 @@ private:
 	Reader reader;
 	size_t numOfDeadPlayers;
 	std::vector<Player> players;
-	Line startLine;
 	Line finishLine;
+	std::vector<Coordinates> startCoordinates;
 
+	void initPlayers( const PlayersInfo& playersInfo );
 	int getPlayerOnFinish();
 	bool finishLineIntersectsWithPlayer( size_t num );
 	void turnOfPlayer( size_t num );

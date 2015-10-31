@@ -7,12 +7,10 @@ int main()
 {
 	Reader reader;
 	try {
-		Map newMap( reader.readMap( MAP_PATH ) );
-		Line startLine = reader.readLine();
-		Line finishLine = reader.readLine();
-		PlayersInfo newPlayersInfo = reader.readPlayers();
-		Game newGame( newMap, newPlayersInfo, startLine, finishLine, reader );
-		newGame.start();
+		MapFileInput input = reader.readFile( MAP_PATH );
+		Map newMap( input.size, input.field );
+		Game newGame( newMap, input.finishLine, reader, input.startPositions );
+		newGame.start(); /*здесь вместо: Создание окна приложения*/
 	} catch( std::exception const &e ) {
 		std::cerr << e.what() << std::endl;
 	}

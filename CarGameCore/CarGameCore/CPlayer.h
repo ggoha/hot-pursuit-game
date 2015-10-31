@@ -15,6 +15,8 @@ struct Coordinates {
 
 	Coordinates()
 	{
+		x = 0;
+		y = 0;
 	}
 
 	bool operator == ( const Coordinates &point ) const

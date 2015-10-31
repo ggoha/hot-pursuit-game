@@ -10,7 +10,7 @@ class Map {
 public:
 	Map();
 
-	Map( const Field& newMap );
+	Map( const Size& size, const Field& newMap );
 
 	~Map();
 

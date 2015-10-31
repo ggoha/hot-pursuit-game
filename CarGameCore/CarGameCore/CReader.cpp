@@ -8,7 +8,7 @@ Reader::~Reader()
 {
 }
 
-bool isNumber( std::string number )
+bool isNumber( const std::string& number )
 {
 	for( int i = 0; i < number.length(); ++i ) {
 		if( number[i] > '9' || number[i] < '0' ) {
@@ -18,9 +18,13 @@ bool isNumber( std::string number )
 	return true;
 }
 
-Field Reader::readMap( const std::string& path )
+bool isValidCell( int cell )
 {
-	Field gameField;
+	return cell == 0 || cell == 1 || cell == 2;
+}
+
+MapFileInput Reader::readFile( const std::string& path )
+{
 	std::ifstream fin( path );
 
 	if( !fin ) {
@@ -28,27 +32,41 @@ Field Reader::readMap( const std::string& path )
 		error += path;
 		throw std::runtime_error( error );
 	}
-
-	std::string currentLine;
-
-	while( std::getline( fin, currentLine ) ) {
-		std::vector <size_t> line;
-		currentLine += " ";
-		while( currentLine.length() > 0 ) {
-			size_t pos = currentLine.find( " " );
-			std::string number = currentLine.substr( 0, pos );
-			if( !isNumber( number ) ) {
-				std::string error = "Bad file with map: invalid symbol in ";
-				error += number;
+	
+	int n, m;
+	fin >> n >> m;
+	if( n <= 0 || m <= 0 ) {
+		std::string error = "Bad file with map: size of field should be > 0";
+		throw std::runtime_error( error );
+	}
+	Size size( n, m );
+	Field gameField;
+	std::vector<Coordinates> startPositions;
+	gameField.resize( n );
+	for( size_t i = 0; i < n; ++i ) {
+		for( size_t j = 0; j < m; ++j ) {
+			int position;
+			fin >> position;
+			if( !isValidCell( position ) ) {
+				std::string error = "Bad file with map: invalid symbol at ";
+				error += std::to_string( j ) + " " + std::to_string( i );
 				throw std::runtime_error( error );
 			}
-			line.push_back( atoi( number.c_str() ) );
-			currentLine.erase( 0, pos + 1 );
+			if( position == 2 ) {
+				startPositions.push_back( Coordinates( j - 1, i - 1 ) );
+			}
+			gameField[i].push_back( position );
 		}
-		gameField.push_back( line );
 	}
 
-	return gameField;
+	int firstPointX, firstPointY, secondPointX, secondPointY;
+	fin >> firstPointX >> firstPointY >> secondPointX >> secondPointY;
+	if( firstPointX < 0 || firstPointY < 0 || secondPointX < 0 || secondPointY < 0 ) {
+		std::string error = "Bad file with map: invalid coordinates of finish line";
+		throw std::runtime_error( error );
+	}
+	Line finishLine( Coordinates( firstPointX, firstPointY ), Coordinates( secondPointX, secondPointY ) );
+	return MapFileInput( gameField, size, startPositions, finishLine );
 }
 
 Coordinates readCoordinates()
@@ -89,13 +107,4 @@ int Reader::readPlayersChoice( size_t num )
 		throw std::runtime_error( error );
 	}
 	return move;
-}
-
-Line Reader::readLine()
-{
-	std::cout << "Enter coordinates of line:" << std::endl;
-	Coordinates firstPoint = readCoordinates(),
-		secondPoint = readCoordinates();
-
-	return Line( firstPoint, secondPoint );
 }
