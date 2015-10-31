@@ -32,7 +32,7 @@ MapFileInput Reader::readFile( const std::string& path )
 		error += path;
 		throw std::runtime_error( error );
 	}
-	
+
 	int n, m;
 	fin >> n >> m;
 	if( n <= 0 || m <= 0 ) {
@@ -53,7 +53,7 @@ MapFileInput Reader::readFile( const std::string& path )
 				throw std::runtime_error( error );
 			}
 			if( position == 2 ) {
-				startPositions.push_back( Coordinates( j - 1, i - 1 ) );
+				startPositions.push_back( Coordinates( j, i ) );
 			}
 			gameField[i].push_back( position );
 		}
@@ -61,11 +61,11 @@ MapFileInput Reader::readFile( const std::string& path )
 
 	int firstPointX, firstPointY, secondPointX, secondPointY;
 	fin >> firstPointX >> firstPointY >> secondPointX >> secondPointY;
-	if( firstPointX < 0 || firstPointY < 0 || secondPointX < 0 || secondPointY < 0 ) {
+	if( firstPointX <= 0 || firstPointY <= 0 || secondPointX <= 0 || secondPointY <= 0 ) {
 		std::string error = "Bad file with map: invalid coordinates of finish line";
 		throw std::runtime_error( error );
 	}
-	Line finishLine( Coordinates( firstPointX, firstPointY ), Coordinates( secondPointX, secondPointY ) );
+	Line finishLine( Coordinates( firstPointX - 1, firstPointY - 1 ), Coordinates( secondPointX - 1, secondPointY - 1 ) );
 	return MapFileInput( gameField, size, startPositions, finishLine );
 }
 
@@ -91,8 +91,8 @@ PlayersInfo Reader::readPlayers()
 		throw std::runtime_error( error );
 	}
 	info.numberOfPlayers = numberOfPlayers;
-	for( int i = 0; i < numberOfPlayers; ++i )
-		info.positions.push_back( readCoordinates() );
+	/*for( int i = 0; i < numberOfPlayers; ++i )
+		info.positions.push_back( readCoordinates() );*/
 	return info;
 }
 

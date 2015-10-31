@@ -29,6 +29,11 @@ struct Coordinates {
 		return Coordinates( this->x + point.x, this->y + point.y );
 	}
 
+	Coordinates operator - ( const Coordinates &point ) const
+	{
+		return Coordinates( this->x - point.x, this->y - point.y );
+	}
+
 	int x;
 	int y;
 };
@@ -63,17 +68,19 @@ public:
 	Coordinates getPreviousPosition( void );
 	bool directionIsValid( const Size& size );
 	bool playerIsAlive();
-	bool playerMoved();
-	void setPlayerMoved();
+	void cheat();
+	bool isCheater();
+	void reduceCheat();
 
 private:
 	Coordinates position;
 	Coordinates inertia;
 	Coordinates initial_position; // Для возвращения на старт, после столкновения с машиной
 	Coordinates previous_position;
-	void moveInDirection( Coordinates );
 	bool isAlive;
-	bool moved;
+	int cheated;
+
+	void moveInDirection( Coordinates );
 	Coordinates convertFromDirectionCode( int );
 };
 

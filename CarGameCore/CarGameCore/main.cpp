@@ -10,7 +10,7 @@ int main()
 		MapFileInput input = reader.readFile( MAP_PATH );
 		Map newMap( input.size, input.field );
 		Game newGame( newMap, input.finishLine, reader, input.startPositions );
-		newGame.start(); /*здесь вместо: Создание окна приложения*/
+		newGame.start(); /*здесь : Создание окна приложения*/
 	} catch( std::exception const &e ) {
 		std::cerr << e.what() << std::endl;
 	}

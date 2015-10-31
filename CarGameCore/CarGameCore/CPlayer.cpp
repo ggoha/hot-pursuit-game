@@ -5,7 +5,7 @@ Player::Player()
 	isAlive = true;
 	inertia.x = 0;
 	inertia.y = 0;
-	moved = false;
+	cheated = 0;
 }
 
 Player::Player( const Coordinates& newCoordinates, const bool state ) :
@@ -13,7 +13,7 @@ Player::Player( const Coordinates& newCoordinates, const bool state ) :
 {
 	inertia.x = 0;
 	inertia.y = 0;
-	moved = false;
+	cheated = 0;
 }
 
 Player::~Player()
@@ -31,7 +31,6 @@ void Player::goToStart()
 	this->previous_position = this->initial_position;
 	this->inertia.x = 0;
 	this->inertia.y = 0;
-	moved = false;
 };
 
 Coordinates Player::convertFromDirectionCode( int directionCode )
@@ -129,12 +128,17 @@ bool Player::playerIsAlive()
 	return isAlive;
 }
 
-bool Player::playerMoved()
+void Player::cheat()
 {
-	return moved;
+	++cheated;
 }
 
-void Player::setPlayerMoved()
+bool Player::isCheater()
 {
-	moved = true;
+	return cheated > 0;
+}
+
+void Player::reduceCheat()
+{
+	--cheated;
 }

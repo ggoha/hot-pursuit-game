@@ -51,14 +51,42 @@ bool Game::finishLineIntersectsWithPlayer( size_t num )
 	return isIntersects( playersPreviousCoordinates, playersCoordinates, finishLine.firstPoint, finishLine.secondPoint );
 }
 
+int vectorMul( const Line& firstVec, const Line& secondVec )
+{
+	return ( firstVec.secondPoint - firstVec.firstPoint ).x * ( secondVec.secondPoint - secondVec.firstPoint ).y
+		- ( firstVec.secondPoint - firstVec.firstPoint ).y * ( secondVec.secondPoint - secondVec.firstPoint ).x;
+}
+
+
+double distance( const Coordinates& firstPoint, const Coordinates& secondPoint )
+{
+	return sqrt( ( firstPoint.x - secondPoint.x ) * ( firstPoint.x - secondPoint.x ) + ( firstPoint.y - secondPoint.y ) * ( firstPoint.y - secondPoint.y ) );
+}
+
+bool pointOnFinish( const Coordinates& point, const Line& line )
+{
+	return distance( point, line.firstPoint ) + distance( point, line.secondPoint ) - distance( line.firstPoint, line.secondPoint ) < 0.000001;
+}
+
 int Game::getPlayerOnFinish()
 {
 	for( size_t i = 0; i < players.size(); ++i ) {
-		if( !players[i].playerMoved() ) {
+		if( pointOnFinish( players[i].getPreviousPosition(), finishLine ) ) {
 			continue;
 		}
-		if( finishLineIntersectsWithPlayer( i ) ) {
-			return ( int ) i;
+		if( finishLineIntersectsWithPlayer( i )
+			&& vectorMul( finishLine, Line( players[i].getPreviousPosition(), players[i].getPosition() ) ) > 0 ) {
+			players[i].cheat();
+			continue;
+		}
+		if( finishLineIntersectsWithPlayer( i )
+			&& vectorMul( finishLine, Line( players[i].getPreviousPosition(), players[i].getPosition() ) ) < 0 ) {
+			if( !players[i].isCheater() ) {
+				return ( int ) i;
+			} else {
+				players[i].reduceCheat();
+				continue;
+			}
 		}
 	}
 	return -1;
@@ -113,10 +141,6 @@ void Game::turnOfPlayer( size_t num )
 	int direction = reader.readPlayersChoice( num );
 
 	players[num].move( direction, map.getSize() );
-	if( !players[num].playerMoved()
-		&& !finishLineIntersectsWithPlayer( num ) ) {
-		players[num].setPlayerMoved();
-	}
 
 	if( !players[num].directionIsValid( map.getSize() ) && !finishLineIntersectsWithPlayer( num ) ) {
 		// Смысл: если на скорости пересек финиш и выехал за пределы поля ЗА финишом - считается, что победил
@@ -169,12 +193,17 @@ void Game::showPlayersState( size_t num ) // Рисует изображение
 
 void Game::initPlayers( const PlayersInfo& playersInfo )
 {
-
+	if( playersInfo.numberOfPlayers > startCoordinates.size() ) {
+		throw std::runtime_error( "Too many players on field" );
+	}
+	for( size_t i = 0; i < playersInfo.numberOfPlayers; ++i ) {	// Все игроки на стартовых позициях, которые были нанесены на карту
+		players.push_back( Player( startCoordinates[i], true ) );
+	}
 }
 
 void Game::start()
 {
-	initPlayers( reader.readPlayers() ); // TODO
+	initPlayers( reader.readPlayers() );
 	initPlayersPositionsInMap(); // На карте проставляются координаты машинок
 	std::cout << "Game has been started. Gl hf!" << std::endl;
 	int player;
@@ -183,7 +212,9 @@ void Game::start()
 			if( players[i].playerIsAlive() ) {
 				clearPlayersState( i );
 				turnOfPlayer( i ); // todo: AI: занести его в players[] и с помощью API получать следующих ход(см документацию) 
-				showPlayersState( i );
+				if( players[i].playerIsAlive() ) { // Если не вылетел за границы
+					showPlayersState( i );
+				}
 				map.print(); // Вывод поля на консоль
 			}
 		}
