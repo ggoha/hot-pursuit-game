@@ -5,8 +5,9 @@ Game::Game()
 	numOfDeadPlayers = 0;
 }
 
-Game::Game( const Map& newMap, const Line& newLine, const Reader& newReader, const std::vector<Coordinates>& coordinates ) :
-	map( newMap ), reader( newReader ), finishLine( newLine ), startCoordinates( coordinates ), numOfDeadPlayers( 0 )
+Game::Game( const Map& newMap, const Line& newLine, const Reader& newReader, const std::vector<Coordinates>& coordinates, 
+			const std::vector<Car>& newCars ) :
+	map( newMap ), reader( newReader ), finishLine( newLine ), startCoordinates( coordinates ), numOfDeadPlayers( 0 ), cars(newCars)
 {
 }
 
@@ -201,9 +202,14 @@ void Game::initPlayers( const PlayersInfo& playersInfo )
 	}
 }
 
-void Game::start()
+void Game::start( int argc, char* argv[] )
 {
-	initPlayers( reader.readPlayers() );
+	/*visual start*/
+	Drawing drawing_module( map, cars );
+	drawing_module.draw( argc, argv ); 
+	/*visual end*/
+
+	initPlayers( reader.readPlayers() ); // todo: поменять на просто int в аргументе
 	initPlayersPositionsInMap(); // На карте проставляются координаты машинок
 	std::cout << "Game has been started. Gl hf!" << std::endl;
 	int player;

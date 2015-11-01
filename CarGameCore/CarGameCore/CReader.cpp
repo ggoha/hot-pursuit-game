@@ -2,6 +2,9 @@
 
 Reader::Reader()
 {
+	color_dict["Red"] = Red;
+	color_dict["Green"] = Green;
+	color_dict["Blue"] = Blue;
 }
 
 Reader::~Reader()
@@ -23,13 +26,12 @@ bool isValidCell( int cell )
 	return cell == 0 || cell == 1 || cell == 2;
 }
 
-MapFileInput Reader::readFile( const std::string& path )
+MapFileInput Reader::readData( const std::string& mapPath, const std::string& carPath )
 {
-	std::ifstream fin( path );
-
+	std::ifstream fin( mapPath );
 	if( !fin ) {
 		std::string error = "Can't open file ";
-		error += path;
+		error += mapPath;
 		throw std::runtime_error( error );
 	}
 
@@ -39,14 +41,61 @@ MapFileInput Reader::readFile( const std::string& path )
 		std::string error = "Bad file with map: size of field should be > 0";
 		throw std::runtime_error( error );
 	}
+
 	Size size( n, m );
-	Field gameField;
+	std::pair<Field, std::vector<Coordinates>> gameFieldInfo = readMap( n, m, fin );
+	Line finishLine = readFinishLine( fin );
+	std::vector<Car> cars = readCars( carPath );
+	return MapFileInput( gameFieldInfo.first, size, gameFieldInfo.second, cars, finishLine );
+}
+
+std::vector<Car> Reader::readCars( const std::string& carPath )
+{
+	std::ifstream input( carPath );
+	if( !input ) {
+		std::string error = "Can't open file ";
+		error += carPath;
+		throw std::runtime_error( error );
+	}
+	int n = 0;
+	int number_of_steps = 0;
+	std::string color = "";
+	input >> n;
+	std::vector<Car> cars;
+	for( int i = 0; i < n; ++i ) {
+		input >> color;
+		input >> number_of_steps; // should it be the same for all cars?
+		Car car( color_dict[color] );
+		for( int j = 0; j < number_of_steps; ++j ) {
+			Coord step;
+			input >> step.x >> step.y;
+			car.Push( step );
+		}
+		car.Calculate_angles();
+		cars.push_back( car );
+	}
+	return cars;
+}
+
+Line Reader::readFinishLine( std::ifstream& input )
+{
+	int firstPointX, firstPointY, secondPointX, secondPointY;
+	input >> firstPointX >> firstPointY >> secondPointX >> secondPointY;
+	if( firstPointX <= 0 || firstPointY <= 0 || secondPointX <= 0 || secondPointY <= 0 ) {
+		std::string error = "Bad file with map: invalid coordinates of finish line";
+		throw std::runtime_error( error );
+	}
+	return Line( Coordinates( firstPointX - 1, firstPointY - 1 ), Coordinates( secondPointX - 1, secondPointY - 1 ) );
+}
+
+std::pair<Field, std::vector<Coordinates>> Reader::readMap( const int n, const int m, std::ifstream& input )
+{
 	std::vector<Coordinates> startPositions;
-	gameField.resize( n );
+	Field gameField( n );
 	for( size_t i = 0; i < n; ++i ) {
 		for( size_t j = 0; j < m; ++j ) {
 			int position;
-			fin >> position;
+			input >> position;
 			if( !isValidCell( position ) ) {
 				std::string error = "Bad file with map: invalid symbol at ";
 				error += std::to_string( j ) + " " + std::to_string( i );
@@ -58,15 +107,7 @@ MapFileInput Reader::readFile( const std::string& path )
 			gameField[i].push_back( position );
 		}
 	}
-
-	int firstPointX, firstPointY, secondPointX, secondPointY;
-	fin >> firstPointX >> firstPointY >> secondPointX >> secondPointY;
-	if( firstPointX <= 0 || firstPointY <= 0 || secondPointX <= 0 || secondPointY <= 0 ) {
-		std::string error = "Bad file with map: invalid coordinates of finish line";
-		throw std::runtime_error( error );
-	}
-	Line finishLine( Coordinates( firstPointX - 1, firstPointY - 1 ), Coordinates( secondPointX - 1, secondPointY - 1 ) );
-	return MapFileInput( gameField, size, startPositions, finishLine );
+	return std::make_pair( gameField, startPositions );
 }
 
 Coordinates readCoordinates()

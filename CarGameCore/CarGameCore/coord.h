@@ -1,5 +1,6 @@
 ﻿#pragma once
 // координаты в игре
+
 struct Coord
 {
 	int x;

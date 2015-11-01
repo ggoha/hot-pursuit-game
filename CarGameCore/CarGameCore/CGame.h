@@ -3,10 +3,19 @@
 #include "CMap.h"
 #include "CPlayer.h"
 #include "CReader.h"
+#include "drawing.h"
+#include "car.h"
+#include "coord.h"
 #include <vector>
 #include <algorithm>
 #include <iostream>
 #include <memory>
+#include <map>
+#include <fstream>
+
+const int DEFAULT_WINDOW_WIDTH = 500;
+const int DEFAULT_WINDOW_HEIGHT = 500;
+const int DEFAULT_STEPS_PER_CELL = 20;
 
 struct PointsInformation {
 	PointsInformation( const bool condition, const Coordinates& oldCoordinates, const Coordinates& newCoordinate ) :
@@ -24,11 +33,11 @@ class Game {
 public:
 	Game();
 
-	Game( const Map& map, const Line& finishLine, const Reader& reader, const std::vector<Coordinates>& coordinates );
+	Game( const Map& map, const Line& finishLine, const Reader& reader, const std::vector<Coordinates>& coordinates, const std::vector<Car>& cars );
 
 	~Game();
 
-	void start();
+	void start( int argc, char* argv[] );
 	void finish( size_t winner );
 	void fatalFinish();
 	PointsInformation getPlayersBasePoints( size_t num ); // Отдаем Frontend у
@@ -40,6 +49,7 @@ private:
 	std::vector<Player> players;
 	Line finishLine;
 	std::vector<Coordinates> startCoordinates;
+	std::vector<Car> cars;
 
 	void initPlayers( const PlayersInfo& playersInfo );
 	int getPlayerOnFinish();
