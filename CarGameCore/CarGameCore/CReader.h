@@ -7,7 +7,7 @@
 #include <string>
 #include <assert.h>
 
-typedef std::vector< std::vector<size_t> > Field;
+typedef std::vector< std::vector<int> > Field;
 
 struct Line {
 	Line()

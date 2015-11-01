@@ -1,0 +1,7 @@
+Как поставить glut (необходимый для openGL) и прикрутить его к VS.
+	1. Скачиваете отсюда freeglut 3.0.0 MSVC Package http://www.transmissionzero.co.uk/software/freeglut-devel/, куда-нибудь распаковываете
+	2. В настройках проекта (у нас win32 application x86) выполняете следующее:
+		2.1. В C/C++ -> General в поле Additional Include Directories прописываете <your_path_to_freeglut>\freeglut\include\GL
+		2.2. В Linker -> General в поле Additional Library Directories пишете <your_path_to_freeglut>\freeglut\lib
+		2.3. В Linker -> Advanced в поле Entry Point пишете mainCRTStartup
+	3. Рядом с исполняемым файлом кладете freeglut.dll из <your_path_to_freeglut>\freeglut\bin
