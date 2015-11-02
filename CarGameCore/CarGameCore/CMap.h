@@ -4,7 +4,7 @@
 #include <iostream>
 
 #include <glut.h>
-#include "coord.h"
+#include "Common.h"
 #include <memory>
 
 typedef std::pair<size_t, size_t> Size;

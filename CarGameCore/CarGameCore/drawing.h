@@ -5,14 +5,15 @@
 #include <glut.h>
 #include "CMap.h"
 #include "SOIL.h"
-#include "car.h"
+#include "Car.h"
 /* OpenGL needs static functions and command line arguments for drawing*/
 
-class Drawing
-{
+class Drawing {
 public:
 	Drawing( Map &map_data, std::vector<Car> &_cars );
-	Drawing() {};
+	Drawing()
+	{
+	};
 	void draw( int argc, char * argv[] );
 	static void Load_texture( const char*, GLuint& texture );
 

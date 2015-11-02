@@ -1,12 +1,14 @@
 ﻿#pragma once 
-#include "coord.h"
+#include "Common.h"
 #include "glut.h"
-enum TColor { Red, Blue, Green };
+
+enum TColor {
+	Red, Blue, Green
+};
 
 #define PI 3.14159265
 
-class Car
-{
+class Car {
 public:
 	Car( std::vector<Coord> &coords_data, int _frames_per_step, TColor _color );
 	Car( std::vector<Coord> &coords_data )

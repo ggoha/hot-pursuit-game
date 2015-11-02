@@ -132,8 +132,6 @@ PlayersInfo Reader::readPlayers()
 		throw std::runtime_error( error );
 	}
 	info.numberOfPlayers = numberOfPlayers;
-	/*for( int i = 0; i < numberOfPlayers; ++i )
-		info.positions.push_back( readCoordinates() );*/
 	return info;
 }
 

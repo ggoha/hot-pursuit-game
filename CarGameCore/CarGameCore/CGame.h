@@ -3,9 +3,9 @@
 #include "CMap.h"
 #include "CPlayer.h"
 #include "CReader.h"
-#include "drawing.h"
-#include "car.h"
-#include "coord.h"
+#include "Drawing.h"
+#include "Car.h"
+#include "Common.h"
 #include <vector>
 #include <algorithm>
 #include <iostream>
@@ -51,7 +51,7 @@ private:
 	std::vector<Coordinates> startCoordinates;
 	std::vector<Car> cars;
 
-	void initPlayers( const PlayersInfo& playersInfo );
+	void initPlayers( int numberOfPlayers );
 	int getPlayerOnFinish();
 	bool finishLineIntersectsWithPlayer( size_t num );
 	void turnOfPlayer( size_t num );

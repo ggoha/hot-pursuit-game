@@ -1,5 +1,5 @@
 ﻿#include <vector>
-#include "car.h"
+#include "Car.h"
 
 Car::Car( std::vector<Coord> &coords_data, int _frames_per_step, TColor _color = Red )
 	: coords( coords_data ), current_step( 0 ), step_iteration( 0 ),
@@ -69,8 +69,8 @@ void Car::Draw( float cell_size, WCoord indent )
 		Dx = left,
 		Dy = top;
 
-	float centerX = Dx - (Dx - Bx) / 2,
-		centerY = Dy - (Dy - By) / 2;
+	float centerX = Dx - ( Dx - Bx ) / 2,
+		centerY = Dy - ( Dy - By ) / 2;
 	rotate_car( Ax, Ay, Bx, By, Cx, Cy, Dx, Dy, centerX, centerY, angle );
 	glTexCoord2f( 0.0f, 0.0f ); glVertex3f( Ax, Ay, 0.0f );
 	glTexCoord2f( 1.0f, 0.0f ); glVertex3f( Bx, By, 0.0f );
@@ -95,8 +95,8 @@ WCoord Car::move( float cell_size, WCoord indent, float &angle )
 	if( current_step + 1 < coords.size() ) {
 		float coord_x = coords[current_step + 1].x - coords[current_step].x;
 		float coord_y = coords[current_step + 1].y - coords[current_step].y;
-		float dx = (coord_x) / frames_per_step;
-		float dy = (coord_y) / frames_per_step;
+		float dx = ( coord_x ) / frames_per_step;
+		float dy = ( coord_y ) / frames_per_step;
 		float x = coords[current_step].x + step_iteration * dx;
 		float y = coords[current_step].y + step_iteration * dy;
 
@@ -113,7 +113,7 @@ float find_angle( int x, int y )
 	float angle = 0.0;
 	int length = x * x + y * y;
 	if( length != 0 ) {
-		angle = ( float )x / sqrt( length );
+		angle = ( float ) x / sqrt( length );
 	}
 	return acos( angle );
 }
