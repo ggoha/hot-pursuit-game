@@ -24,8 +24,8 @@ void Drawing::reshape( int width, int height )
 
 void Drawing::timer( int value )
 {
-	glutPostRedisplay();
-	glutTimerFunc( 1, timer, 0 );
+	glutPostRedisplay(); // marks the current window as needing to be redisplayed
+	glutTimerFunc( 1, timer, 0 ); // registers a timer callback to be triggered in a specified number of milliseconds.
 }
 
 
@@ -94,7 +94,7 @@ void Drawing::normalKeyHandler( unsigned char key, int x, int y )
 {
 	switch( key ) {
 		case 55:
-			// OnMove(7, map.getSize() );
+			// OnMove(7, map.getSize() ); изменить координаты машинки и вызвать glutPostRedisplay();
 			break;
 		case 56:
 			// OnMove(8, map.getSize() );
@@ -132,11 +132,11 @@ void Drawing::draw( int argc, char * argv[] )
 
 	glutKeyboardFunc( normalKeyHandler ); // Обработка нажатий клавиш от игроков
 
-	load();
+	load(); // Загрузка текстур + машинок
 
-	glutTimerFunc( 1, timer, 0 );
-	glutReshapeFunc( reshape );
-	glutDisplayFunc( display );
+	glutTimerFunc( 1, timer, 0 ); // каждую милисекунду говорит что окно нуждается в перерисовке
+	glutReshapeFunc( reshape ); // invoke reshape при изменении окна
+	glutDisplayFunc( display ); // если нужно сделать redisplay (callback на redisplay присылается из timer)
 
 	glutMainLoop();
 }

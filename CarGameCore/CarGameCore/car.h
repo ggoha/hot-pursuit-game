@@ -40,6 +40,7 @@ public:
 	void Draw( float cell_size, WCoord indent );
 
 	GLuint texture;
+
 private:
 	WCoord transate_to_wcoord( float x, float y, float cell_size, WCoord indent );
 	void rotate( float &x, float &y, float angle );

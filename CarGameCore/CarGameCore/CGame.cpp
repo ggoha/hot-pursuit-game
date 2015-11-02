@@ -206,7 +206,7 @@ void Game::start( int argc, char* argv[] )
 {
 	/*visual start*/
 	Drawing drawing_module( map, cars );
-	drawing_module.draw( argc, argv );
+	drawing_module.draw( argc, argv ); // Main визуализатора
 	/*visual end*/
 
 	int n = 2; // Debug option
