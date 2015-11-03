@@ -90,35 +90,42 @@ void Drawing::load()
 	}
 }
 
+void Drawing::OnMove( int direction, Size size ) //  size - размер карты - нужен для обработки хода
+{
+	// TODO:
+	// void Game::turnOfPlayer( size_t num ) - функция в CGame, в которой обрабатывается ход игрока.
+	// void Game::start() - как раньше с консолью все обрабатывалось
+}
+
 void Drawing::normalKeyHandler( unsigned char key, int x, int y )
 {
 	switch( key ) {
 		case 55:
-			// OnMove(7, map.getSize() ); изменить координаты машинки и вызвать glutPostRedisplay();
+		    OnMove(7, map.getSize() ); 
 			break;
 		case 56:
-			// OnMove(8, map.getSize() );
+			OnMove(8, map.getSize() );
 			break;
 		case 57:
-			// OnMove(9, map.getSize() );
+			OnMove(9, map.getSize() );
 			break;
 		case 52:
-			// OnMove(4, map.getSize() );
+			OnMove(4, map.getSize() );
 			break;
 		case 53:
-			// OnMove(5, map.getSize() );
+			OnMove(5, map.getSize() );
 			break;
 		case 54:
-			// OnMove(6, map.getSize() );
+			OnMove(6, map.getSize() );
 			break;
 		case 49:
-			// OnMove(1, map.getSize() );
+			OnMove(1, map.getSize() );
 			break;
 		case 50:
-			// OnMove(2, map.getSize() );
+			OnMove(2, map.getSize() );
 			break;
 		case 51:
-			// OnMove(3, map.getSize() );
+			OnMove(3, map.getSize() );
 			break;
 	}
 }

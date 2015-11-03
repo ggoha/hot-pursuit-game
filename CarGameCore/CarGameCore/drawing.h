@@ -25,4 +25,5 @@ private:
 	static void timer( int value );
 	static Map map;
 	static std::vector<Car> cars;
+	static void OnMove( int direction, Size size );
 };

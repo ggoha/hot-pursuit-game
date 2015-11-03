@@ -209,8 +209,8 @@ void Game::start( int argc, char* argv[] )
 	drawing_module.draw( argc, argv ); // Main визуализатора
 	/*visual end*/
 
-	int n = 2; // Debug option
-	initPlayers( n ); // todo: поменять на просто int в аргументе
+	/*int n = 2; // Debug option
+	initPlayers( n ); 
 	initPlayersPositionsInMap(); // На карте проставляются координаты машинок
 	std::cout << "Game has been started. Gl hf!" << std::endl;
 	int player;
@@ -233,7 +233,7 @@ void Game::start( int argc, char* argv[] )
 		fatalFinish();
 		return;
 	}
-	finish( player );
+	finish( player );*/
 }
 
 void Game::finish( size_t winner )
