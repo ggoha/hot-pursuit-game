@@ -1,14 +1,24 @@
 ﻿#include "CGame.h"
+#include "Drawing.h"
 
 Game::Game()
 {
 	numOfDeadPlayers = 0;
+	menuChoice.push_back(PLAYER);
+	menuChoice.push_back(AI);
+	menuChoice.push_back(NONE);
+	menuChoice.push_back(NONE);
 }
 
 Game::Game( const Map& newMap, const Line& newLine, const Reader& newReader, const std::vector<Coordinates>& coordinates,
 			const std::vector<Car>& newCars ) :
 	map( newMap ), reader( newReader ), finishLine( newLine ), startCoordinates( coordinates ), numOfDeadPlayers( 0 ), cars( newCars )
 {
+	numOfDeadPlayers = 0;
+	menuChoice.push_back(PLAYER);
+	menuChoice.push_back(AI);
+	menuChoice.push_back(NONE);
+	menuChoice.push_back(NONE);
 }
 
 Game::~Game()
@@ -205,7 +215,7 @@ void Game::initPlayers( int numberOfPlayers )
 void Game::start( int argc, char* argv[] )
 {
 	/*visual start*/
-	Drawing drawing_module( map, cars );
+	Drawing drawing_module(this, map, cars );
 	drawing_module.draw( argc, argv ); // Main визуализатора
 	/*visual end*/
 

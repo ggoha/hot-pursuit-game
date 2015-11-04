@@ -1,9 +1,9 @@
 ﻿#pragma once
-
+#ifndef NODE_20100118
+#define NODE_20100118
 #include "CMap.h"
 #include "CPlayer.h"
 #include "CReader.h"
-#include "Drawing.h"
 #include "Car.h"
 #include "Common.h"
 #include <vector>
@@ -12,7 +12,7 @@
 #include <memory>
 #include <map>
 #include <fstream>
-
+class Drawing;
 const int DEFAULT_WINDOW_WIDTH = 500;
 const int DEFAULT_WINDOW_HEIGHT = 500;
 const int DEFAULT_STEPS_PER_CELL = 20;
@@ -28,6 +28,9 @@ struct PointsInformation {
 	Coordinates currentCoordinates;
 };
 
+enum TType {
+	NONE, AI, PLAYER
+};
 
 class Game {
 public:
@@ -41,7 +44,7 @@ public:
 	void finish( size_t winner );
 	void fatalFinish();
 	PointsInformation getPlayersBasePoints( size_t num ); // Отдаем Frontend у
-
+	std::vector<int> menuChoice;
 private:
 	Map map;
 	Reader reader;
@@ -50,7 +53,6 @@ private:
 	Line finishLine;
 	std::vector<Coordinates> startCoordinates;
 	std::vector<Car> cars;
-
 	void initPlayers( int numberOfPlayers );
 	int getPlayerOnFinish();
 	bool finishLineIntersectsWithPlayer( size_t num );
@@ -61,3 +63,5 @@ private:
 	void clearPlayersState( size_t num );
 	void showPlayersState( size_t num );
 };
+
+#endif /* NODE_20100118 */

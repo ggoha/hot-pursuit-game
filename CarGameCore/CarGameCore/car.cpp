@@ -45,17 +45,29 @@ void Car::rotate_car( float &Ax, float &Ay, float &Bx, float &By, float &Cx, flo
 }
 
 
-void Car::Draw( float cell_size, WCoord indent )
+void Car::Draw( float cell_size, WCoord indent, bool without_move )
 {
 	glEnable( GL_TEXTURE_2D );
 	glBindTexture( GL_TEXTURE_2D, texture );
 	glTexEnvf( GL_TEXTURE_2D, GL_TEXTURE_ENV_MODE, GL_MODULATE );
 	float angle = 0.0;
-	WCoord cord = move( cell_size, indent, angle );
-	float left = cord.x;
-	float right = cord.x + cell_size;
-	float bottom = cord.y + cell_size / 2;
-	float top = cord.y;
+	float left, right, bottom, top;
+	WCoord cord;
+	if (without_move)
+	{
+		left = indent.x;
+		right = indent.x + cell_size;
+		bottom = indent.y + cell_size / 2;
+		top = indent.y;
+	}
+	else
+	{
+		cord = move(cell_size, indent, angle);
+		left = cord.x;
+		right = cord.x + cell_size;
+		bottom = cord.y + cell_size / 2;
+		top = cord.y;
+	}
 	glDepthMask( GL_FALSE );
 	glEnable( GL_BLEND );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
