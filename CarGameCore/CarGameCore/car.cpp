@@ -89,6 +89,7 @@ void Car::Draw( float cell_size, WCoord indent )
 	glEnd();
 	glDisable( GL_BLEND );
 	glDepthMask( GL_TRUE );
+	Sleep( 1 );
 }
 
 float find_angle( int x, int y ) {

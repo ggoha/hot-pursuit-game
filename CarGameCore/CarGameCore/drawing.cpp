@@ -1,5 +1,5 @@
 ﻿#include "drawing.h"
-
+#include "random";
 Map Drawing::map; // static data members must be explicitly defined in exactly one compilation unit
 std::vector<Car> Drawing::cars;
 
@@ -95,54 +95,42 @@ void Drawing::load()
 	}
 }
 
+void Drawing::OnMove( int num, Size size ) {
+	Coord c;
+	c.x = rand() % size.first;
+	c.y = rand() % size.second;
+	cars[0].MoveTo( c, false );
+}
+
 void Drawing::normalKeyHandler( unsigned char key, int x, int y )
 {
 	switch( key ) {
 		case 55: // todo: OnMove(int directionCode); номер ходящего игрока хранится в классе : size_t currentPlayer
-			glutSetWindow( glutGetWindow() );
-			glutPositionWindow( 0, 0 );
-			// OnMove(7, map.getSize() );
+			OnMove(7, map.getSize() );
 			break;
 		case 56:
-			glutSetWindow( glutGetWindow() );
-			glutPositionWindow( 500, 0 );
-			// OnMove(8, map.getSize() );
+			OnMove(8, map.getSize() );
 			break;
 		case 57:
-			glutSetWindow( glutGetWindow() );
-			glutPositionWindow( 800, 0 );
-			// OnMove(9, map.getSize() );
+			OnMove(9, map.getSize() );
 			break;
 		case 52:
-			glutSetWindow( glutGetWindow() );
-			glutPositionWindow( 0, 200 );
-			// OnMove(4, map.getSize() );
+			OnMove(4, map.getSize() );
 			break;
 		case 53:
-			glutSetWindow( glutGetWindow() );
-			glutPositionWindow( 0, 0 );
-			glutReshapeWindow( 20, 20 );
-			// OnMove(5, map.getSize() );
+			 OnMove(5, map.getSize() );
 			break;
 		case 54:
-			glutSetWindow( glutGetWindow() );
-			glutPositionWindow( 800, 200 );
-			// OnMove(6, map.getSize() );
+			OnMove(6, map.getSize() );
 			break;
 		case 49:
-			glutSetWindow( glutGetWindow() );
-			glutPositionWindow( 0, 600 );
-			// OnMove(1, map.getSize() );
+			OnMove(1, map.getSize() );
 			break;
 		case 50:
-			glutSetWindow( glutGetWindow() );
-			glutPositionWindow( 500, 600 );
-			// OnMove(2, map.getSize() );
+			OnMove(2, map.getSize() );
 			break;
 		case 51:
-			glutSetWindow( glutGetWindow() );
-			glutPositionWindow( 800, 600 );
-			// OnMove(3, map.getSize() );
+			OnMove(3, map.getSize() );
 			break;
 	}
 }

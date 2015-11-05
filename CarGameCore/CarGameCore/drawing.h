@@ -15,6 +15,7 @@ public:
 	Drawing() {};
 	void draw( int argc, char * argv[] );
 	static void Load_texture( const char*, GLuint& texture );
+	static void OnMove( int num, Size size );
 
 private:
 	static void normalKeyHandler( unsigned char key, int x, int y );
