@@ -37,8 +37,13 @@ void Drawing::display()
 	bool map_reloaded = !map.Need_to_reload();
 	map.Draw(); // draw the map
 	float cell_size = map.Get_cell_size(); // calculate the size of cell
-	for( size_t i = 0; i < cars.size(); i++ ) {
-		cars[i].Draw( map.Get_cell_size(), map.Get_indent() ); // draw car
+	for( int j = 0; j < cars[0].frames_per_step; j++ ) {
+		map.Draw();
+		for( size_t i = 0; i < cars.size(); i++ ) {
+			cars[i].Draw( map.Get_cell_size(), map.Get_indent() ); // draw car
+		}
+		glFlush();
+		glutSwapBuffers();
 	}
 	glFlush(); // flush changes
 	if( map_reloaded ) {

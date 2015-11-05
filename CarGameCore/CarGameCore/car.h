@@ -13,6 +13,9 @@ public:
 	{
 		coords = coords_data;
 		color = Red;
+		next_coords = Coord();
+		current_coords = Coord();
+		current_angle = 0;
 	}
 
 	Car( TColor _color )
@@ -21,6 +24,9 @@ public:
 		frames_per_step = 200;
 		current_step = 0;
 		step_iteration = 0;
+		next_coords = Coord();
+		current_coords = Coord();
+		current_angle = 0;
 	}
 
 	TColor Get_color()
@@ -32,12 +38,14 @@ public:
 	{
 		coords.push_back( step );
 	}
+	void MoveTo( Coord inp_next_coord, bool crash );
 
 	void Calculate_angles();
 
 	void Draw( float cell_size, WCoord indent );
 
 	GLuint texture;
+	int frames_per_step;
 private:
 	WCoord transate_to_wcoord( float x, float y, float cell_size, WCoord indent );
 	void rotate( float &x, float &y, float angle );
@@ -47,6 +55,8 @@ private:
 	std::vector<Coord> coords;
 	int current_step;
 	int step_iteration;
-	int frames_per_step;
 	TColor color;
+	Coord current_coords;
+	Coord next_coords;
+	float current_angle;
 };

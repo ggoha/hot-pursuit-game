@@ -3,6 +3,7 @@
 
 struct Coord
 {
+	Coord() :x( 0 ), y( 0 ), angle( 0 ), help_angle( 0 ) {}
 	int x;
 	int y;
 	float angle;
