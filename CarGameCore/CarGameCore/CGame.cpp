@@ -1,6 +1,7 @@
 ﻿#include "CGame.h"
 #include "Drawing.h"
 
+
 Game::Game()
 {
 	numOfDeadPlayers = 0;
@@ -147,18 +148,18 @@ bool Game::playerOutOfTrack( size_t num )
 	return false;
 }
 
-void Game::turnOfPlayer( size_t num )
+std::pair<Coordinates, bool> Game::turnOfPlayer( size_t num, int direction )
 {
-	int direction = reader.readPlayersChoice( num );
+	//int direction = reader.readPlayersChoice( num );
 
 	players[num].move( direction, map.getSize() );
-
+	Coordinates c = players[num].getPosition();
 	if( !players[num].directionIsValid( map.getSize() ) && !finishLineIntersectsWithPlayer( num ) ) {
 		// Смысл: если на скорости пересек финиш и выехал за пределы поля ЗА финишом - считается, что победил
 		players[num].die();
 		++numOfDeadPlayers;
 		std::cout << "Player " << num + 1 << " is dead" << std::endl;
-		return;
+		return std::pair<Coordinates, bool>(c,true);
 	}
 
 	int crashedPlayer = playerCrashedIntoCar( num );
@@ -167,14 +168,15 @@ void Game::turnOfPlayer( size_t num )
 		clearPlayersState( crashedPlayer );
 		players[crashedPlayer].goToStart();
 		showPlayersState( crashedPlayer );
-		return;
+		return std::pair<Coordinates, bool>( c, false );;
 	}
 	if( playerOutOfTrack( num ) ) {
 		players[num].die();
 		++numOfDeadPlayers;
 		std::cout << "Player " << num + 1 << " is dead" << std::endl;
-		return;
+		return std::pair<Coordinates, bool>( c, true );
 	}
+	return std::pair<Coordinates, bool>( c, false );
 }
 
 void Game::initPlayersPositionsInMap()
