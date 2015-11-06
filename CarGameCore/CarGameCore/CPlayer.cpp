@@ -37,39 +37,39 @@ Coordinates Player::convertFromDirectionCode( int directionCode )
 {
 	Coordinates direction( 0, 0 );
 	switch( directionCode ) {
-		case SW:
+		case 7:
 			direction.x = -1;
 			direction.y = +1;
 			break;
-		case S:
+		case 8:
 			direction.x = 0;
 			direction.y = +1;
 			break;
-		case SE:
+		case 9:
 			direction.x = +1;
 			direction.y = +1;
 			break;
-		case W:
+		case 4:
 			direction.x = -1;
 			direction.y = 0;
 			break;
-		case C:
+		case 5:
 			direction.x = 0;
 			direction.y = 0;
 			break;
-		case E:
+		case 6:
 			direction.x = +1;
 			direction.y = 0;
 			break;
-		case NW:
+		case 1:
 			direction.x = -1;
 			direction.y = -1;
 			break;
-		case N:
+		case 2:
 			direction.x = 0;
 			direction.y = -1;
 			break;
-		case NE:
+		case 3:
 			direction.x = +1;
 			direction.y = -1;
 			break;

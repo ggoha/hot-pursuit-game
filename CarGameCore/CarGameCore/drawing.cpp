@@ -42,14 +42,22 @@ void Drawing::display()
 
 	if (!menu)
 	{
+		glClearColor( 1.0, 1.0, 1.0, 0.0 ); // clear background to white
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); // clear buffers
+
 		bool map_reloaded = !map.Need_to_reload();
 		map.Draw(); // draw the map
 		float cell_size = map.Get_cell_size(); // calculate the size of cell
-		for (size_t i = 0; i < cars.size(); i++) {
-			cars[i].Draw(map.Get_cell_size(), map.Get_indent()); // draw car
+		for( int j = 0; j < cars[0].frames_per_step; j++ ) {
+			map.Draw();
+			for( size_t i = 0; i < cars.size(); i++ ) {
+				cars[i].Draw( map.Get_cell_size(), map.Get_indent() ); // draw car
+			}
+			glFlush();
+			glutSwapBuffers();
 		}
 		glFlush(); // flush changes
-		if (map_reloaded) {
+		if( map_reloaded ) {
 			glutSwapBuffers(); // if map wasn't reloaded (and buffers weren't swapped), swap buffers
 		}
 	}
@@ -189,9 +197,16 @@ void Drawing::load()
 
 void Drawing::OnMove(int direction, Size size) //  size - размер карты - нужен для обработки хода
 {
-	// TODO:
-	// void Game::turnOfPlayer( size_t num ) - функция в CGame, в которой обрабатывается ход игрока.
-	// void Game::start() - как раньше с консолью все обрабатывалось
+	if( game->game_ready_to_start ) {  
+		game->current_player++;
+		game->current_player %= game->numberOfPlayers;
+		game->turnOfPlayer( game->current_player, direction );
+		PointsInformation pi = game->getPlayersBasePoints( game->current_player );
+		Coord c;
+		c.x = pi.currentCoordinates.x;
+		c.y = pi.currentCoordinates.y;
+		cars[game->current_player].MoveTo( c, !pi.isAlive );
+	}
 }
 
 void Drawing::normalKeyHandler(unsigned char key, int x, int y)
@@ -247,6 +262,17 @@ int Drawing::clickButton(int x, int y)
 		if (x > i*width / size && x < (i + 1)*width / size && y > height*0.35 && y < height*0.45)
 			game->menuChoice[i] = NONE;
 	}
+	game->initPlayers();
+	for( int i = 0; i < game->numberOfPlayers; i++ ) {
+		PointsInformation pi = game->getPlayersBasePoints(i);
+		Coord c;
+		c.x = pi.currentCoordinates.x;
+		c.y = pi.currentCoordinates.y;
+		cars[i].current_coords = c;
+		cars[i].next_coords = c;
+		cars[i].current_angle = 0;
+	}
+	game->game_ready_to_start = true;
 	//обработка далее
 	if (y < height*0.25)
 		return 1;

@@ -40,11 +40,17 @@ public:
 
 	~Game();
 
+	int current_player;
 	void start( int argc, char* argv[] );
 	void finish( size_t winner );
 	void fatalFinish();
+	void turnOfPlayer( size_t num, int dir );
+	void Game::initPlayers();
 	PointsInformation getPlayersBasePoints( size_t num ); // Отдаем Frontend у
 	std::vector<int> menuChoice;
+	bool game_ready_to_start;
+	int numberOfPlayers;
+
 private:
 	Map map;
 	Reader reader;
@@ -56,7 +62,6 @@ private:
 	void initPlayers( int numberOfPlayers );
 	int getPlayerOnFinish();
 	bool finishLineIntersectsWithPlayer( size_t num );
-	std::pair<Coordinates, bool> turnOfPlayer( size_t num, int dir );
 	int playerCrashedIntoCar( size_t num );
 	bool playerOutOfTrack( size_t num );
 	void initPlayersPositionsInMap();

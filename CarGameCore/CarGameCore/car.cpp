@@ -1,23 +1,23 @@
-﻿#include <vector>
+﻿
+#include <vector>
 #include "Car.h"
 
 Car::Car( std::vector<Coord> &coords_data, int _frames_per_step, TColor _color = Red )
 	: coords( coords_data ), current_step( 0 ), step_iteration( 0 ),
-	color( _color ), frames_per_step( _frames_per_step )
-{
-
+	color( _color ), frames_per_step( _frames_per_step ) {
+	next_coords = Coord();
+	current_coords = Coord();
+	current_angle = 0;
 }
 
-void Car::rotate( float &x, float &y, float angle )
-{
+void Car::rotate( float &x, float &y, float angle ) {
 	float tx = x,
 		ty = y;
 	x = tx * cos( angle ) - ty * sin( angle );
 	y = tx * sin( angle ) + ty * cos( angle );
 }
 
-void Car::rotate_car( float &Ax, float &Ay, float &Bx, float &By, float &Cx, float &Cy, float &Dx, float &Dy, float centerX, float centerY, float angle )
-{
+void Car::rotate_car( float &Ax, float &Ay, float &Bx, float &By, float &Cx, float &Cy, float &Dx, float &Dy, float centerX, float centerY, float angle ) {
 	Ax -= centerX;
 	Bx -= centerX;
 	Cx -= centerX;
@@ -45,29 +45,24 @@ void Car::rotate_car( float &Ax, float &Ay, float &Bx, float &By, float &Cx, flo
 }
 
 
-void Car::Draw( float cell_size, WCoord indent, bool without_move )
-{
+void Car::Draw( float cell_size, WCoord indent ) {
+	step_iteration++;
+	if( step_iteration >= frames_per_step ) {
+		step_iteration = 0;
+		current_coords = next_coords;
+	}
 	glEnable( GL_TEXTURE_2D );
 	glBindTexture( GL_TEXTURE_2D, texture );
 	glTexEnvf( GL_TEXTURE_2D, GL_TEXTURE_ENV_MODE, GL_MODULATE );
 	float angle = 0.0;
-	float left, right, bottom, top;
-	WCoord cord;
-	if (without_move)
-	{
-		left = indent.x;
-		right = indent.x + cell_size;
-		bottom = indent.y + cell_size / 2;
-		top = indent.y;
+	WCoord cord = move( cell_size, indent, angle );
+	if( current_coords.x != next_coords.x || current_coords.y != next_coords.y ) {
+		current_angle = angle;
 	}
-	else
-	{
-		cord = move(cell_size, indent, angle);
-		left = cord.x;
-		right = cord.x + cell_size;
-		bottom = cord.y + cell_size / 2;
-		top = cord.y;
-	}
+	float left = cord.x;
+	float right = cord.x + cell_size;
+	float bottom = cord.y + cell_size / 2;
+	float top = cord.y;
 	glDepthMask( GL_FALSE );
 	glEnable( GL_BLEND );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
@@ -81,9 +76,9 @@ void Car::Draw( float cell_size, WCoord indent, bool without_move )
 		Dx = left,
 		Dy = top;
 
-	float centerX = Dx - ( Dx - Bx ) / 2,
-		centerY = Dy - ( Dy - By ) / 2;
-	rotate_car( Ax, Ay, Bx, By, Cx, Cy, Dx, Dy, centerX, centerY, angle );
+	float centerX = Dx - (Dx - Bx) / 2,
+		centerY = Dy - (Dy - By) / 2;
+	rotate_car( Ax, Ay, Bx, By, Cx, Cy, Dx, Dy, centerX, centerY, current_angle );
 	glTexCoord2f( 0.0f, 0.0f ); glVertex3f( Ax, Ay, 0.0f );
 	glTexCoord2f( 1.0f, 0.0f ); glVertex3f( Bx, By, 0.0f );
 	glTexCoord2f( 1.0f, 1.0f ); glVertex3f( Cx, Cy, 0.0f );
@@ -91,47 +86,42 @@ void Car::Draw( float cell_size, WCoord indent, bool without_move )
 	glEnd();
 	glDisable( GL_BLEND );
 	glDepthMask( GL_TRUE );
+	Sleep( 1 );
 }
 
-WCoord Car::move( float cell_size, WCoord indent, float &angle )
-{
-	if( current_step + 1 < coords.size() ) {
-		if( step_iteration < frames_per_step ) {
-			step_iteration++;
-		} else {
-			current_step++;
-			step_iteration = 0;
-		}
-	}
-
-	if( current_step + 1 < coords.size() ) {
-		float coord_x = coords[current_step + 1].x - coords[current_step].x;
-		float coord_y = coords[current_step + 1].y - coords[current_step].y;
-		float dx = ( coord_x ) / frames_per_step;
-		float dy = ( coord_y ) / frames_per_step;
-		float x = coords[current_step].x + step_iteration * dx;
-		float y = coords[current_step].y + step_iteration * dy;
-
-		angle = abs( 2.0*coords[current_step].help_angle - coords[current_step].angle );
-		return transate_to_wcoord( x, y, cell_size, indent );
-	} else {
-		Coord last = coords.back();
-		return transate_to_wcoord( last.x, last.y, cell_size, indent );
-	}
-}
-
-float find_angle( int x, int y )
-{
+float find_angle( int x, int y ) {
 	float angle = 0.0;
 	int length = x * x + y * y;
 	if( length != 0 ) {
-		angle = ( float ) x / sqrt( length );
+		angle = (float)x / sqrt( length );
 	}
 	return acos( angle );
 }
 
-void Car::Calculate_angles()
-{
+WCoord Car::move( float cell_size, WCoord indent, float &angle ) {
+	float coord_x = next_coords.x - current_coords.x;
+	float coord_y = next_coords.y - current_coords.y;
+	float dx = (coord_x) / frames_per_step;
+	float dy = (coord_y) / frames_per_step;
+	float x = current_coords.x + step_iteration * dx;
+	float y = current_coords.y + step_iteration * dy;
+	float help_angle;
+	next_coords.y - current_coords.y < 0?help_angle = PI:help_angle = 0;
+	angle = abs( 2.0*help_angle - find_angle( coord_x, coord_y ) );
+	return transate_to_wcoord( x, y, cell_size, indent );
+}
+
+void Car::MoveTo( Coord inp_next_coord, bool crash ) {
+	next_coords = inp_next_coord;
+	if( crash ) {
+		current_coords = inp_next_coord;
+		current_angle = 0;
+	}
+}
+
+
+
+void Car::Calculate_angles() {
 	for( int i = 1; i < coords.size(); ++i ) {
 		coords[i - 1].angle = find_angle( coords[i].x - coords[i - 1].x, coords[i].y - coords[i - 1].y );
 		if( coords[i].y - coords[i - 1].y < 0 ) {
@@ -143,10 +133,10 @@ void Car::Calculate_angles()
 }
 
 // TODO добавить умножение на коэфициент сжатия чтобы соответствовать 2.5D
-WCoord Car::transate_to_wcoord( float x, float y, float cell_size, WCoord indent )
-{
+WCoord Car::transate_to_wcoord( float x, float y, float cell_size, WCoord indent ) {
 	WCoord wcoord( 0, 0 );
 	wcoord.x = x * cell_size + indent.x;
 	wcoord.y = y * cell_size + indent.y;
 	return wcoord;
 }
+

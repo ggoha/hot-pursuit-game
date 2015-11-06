@@ -9,6 +9,9 @@ Game::Game()
 	menuChoice.push_back(AI);
 	menuChoice.push_back(NONE);
 	menuChoice.push_back(NONE);
+	current_player = 0;
+	game_ready_to_start = false;
+	int numberOfPlayers = 0;
 }
 
 Game::Game( const Map& newMap, const Line& newLine, const Reader& newReader, const std::vector<Coordinates>& coordinates,
@@ -20,6 +23,9 @@ Game::Game( const Map& newMap, const Line& newLine, const Reader& newReader, con
 	menuChoice.push_back(AI);
 	menuChoice.push_back(NONE);
 	menuChoice.push_back(NONE);
+	current_player = 0;
+	game_ready_to_start = false;
+	int numberOfPlayers= 0;
 }
 
 Game::~Game()
@@ -148,10 +154,12 @@ bool Game::playerOutOfTrack( size_t num )
 	return false;
 }
 
-std::pair<Coordinates, bool> Game::turnOfPlayer( size_t num, int direction )
+void Game::turnOfPlayer( size_t num, int direction )
 {
 	//int direction = reader.readPlayersChoice( num );
-
+	//current_player %= players.size();
+	//current_player++;
+	//current_player %= players.size();
 	players[num].move( direction, map.getSize() );
 	Coordinates c = players[num].getPosition();
 	if( !players[num].directionIsValid( map.getSize() ) && !finishLineIntersectsWithPlayer( num ) ) {
@@ -159,24 +167,23 @@ std::pair<Coordinates, bool> Game::turnOfPlayer( size_t num, int direction )
 		players[num].die();
 		++numOfDeadPlayers;
 		std::cout << "Player " << num + 1 << " is dead" << std::endl;
-		return std::pair<Coordinates, bool>(c,true);
+		return;
 	}
-
 	int crashedPlayer = playerCrashedIntoCar( num );
 	if( crashedPlayer != -1 ) {
 		players[num].goToStart();
 		clearPlayersState( crashedPlayer );
 		players[crashedPlayer].goToStart();
 		showPlayersState( crashedPlayer );
-		return std::pair<Coordinates, bool>( c, false );;
+		return ;
 	}
 	if( playerOutOfTrack( num ) ) {
 		players[num].die();
 		++numOfDeadPlayers;
 		std::cout << "Player " << num + 1 << " is dead" << std::endl;
-		return std::pair<Coordinates, bool>( c, true );
+		return ;
 	}
-	return std::pair<Coordinates, bool>( c, false );
+	return;
 }
 
 void Game::initPlayersPositionsInMap()
@@ -206,6 +213,22 @@ void Game::showPlayersState( size_t num ) // Рисует изображение
 
 void Game::initPlayers( int numberOfPlayers )
 {
+	if( numberOfPlayers > startCoordinates.size() ) {
+		throw std::runtime_error( "Too many players on field" );
+	}
+	for( size_t i = 0; i < numberOfPlayers; ++i ) {	// Все игроки на стартовых позициях, которые были нанесены на карту
+		players.push_back( Player( startCoordinates[i], true ) );
+	}
+}
+
+
+void Game::initPlayers() {
+	numberOfPlayers = 0;
+	for( int i = 0; i < 4; i++ ) {
+		if( menuChoice[i] != NONE ) {
+			numberOfPlayers++;
+		}
+	}
 	if( numberOfPlayers > startCoordinates.size() ) {
 		throw std::runtime_error( "Too many players on field" );
 	}
