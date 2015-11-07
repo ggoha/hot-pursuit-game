@@ -64,8 +64,5 @@
     <Text Include="..\map.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="cars_file.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
   </ItemGroup>
 </Project>

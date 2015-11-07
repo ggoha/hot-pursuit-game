@@ -26,7 +26,7 @@ bool isValidCell( int cell )
 	return cell == 0 || cell == 1 || cell == 2;
 }
 
-MapFileInput Reader::readData( const std::string& mapPath, const std::string& carPath )
+MapFileInput Reader::readData( const std::string& mapPath )
 {
 	std::ifstream fin( mapPath );
 	if( !fin ) {
@@ -45,8 +45,8 @@ MapFileInput Reader::readData( const std::string& mapPath, const std::string& ca
 	Size size( n, m );
 	std::pair<Field, std::vector<Coordinates>> gameFieldInfo = readMap( n, m, fin );
 	Line finishLine = readFinishLine( fin );
-	std::vector<Car> cars = readCars( carPath );
-	return MapFileInput( gameFieldInfo.first, size, gameFieldInfo.second, cars, finishLine );
+	//std::vector<Car> cars = readCars( carPath );
+	return MapFileInput( gameFieldInfo.first, size, gameFieldInfo.second, finishLine );
 }
 
 std::vector<Car> Reader::readCars( const std::string& carPath )

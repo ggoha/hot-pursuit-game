@@ -5,27 +5,29 @@
 Game::Game()
 {
 	numOfDeadPlayers = 0;
-	menuChoice.push_back(PLAYER);
-	menuChoice.push_back(AI);
-	menuChoice.push_back(NONE);
-	menuChoice.push_back(NONE);
+	numberOfPlayers = 0;
 	current_player = 0;
 	game_ready_to_start = false;
-	int numberOfPlayers = 0;
+	// default settings:
+	menuChoice.push_back( PLAYER );
+	menuChoice.push_back( AI );
+	menuChoice.push_back( NONE );
+	menuChoice.push_back( NONE );
+
 }
 
-Game::Game( const Map& newMap, const Line& newLine, const Reader& newReader, const std::vector<Coordinates>& coordinates,
-			const std::vector<Car>& newCars ) :
-	map( newMap ), reader( newReader ), finishLine( newLine ), startCoordinates( coordinates ), numOfDeadPlayers( 0 ), cars( newCars )
+Game::Game( const Map& newMap, const Line& newLine, const Reader& newReader, const std::vector<Coordinates>& coordinates ):
+	map( newMap ), reader( newReader ), finishLine( newLine ), startCoordinates( coordinates ), numOfDeadPlayers( 0 )
 {
 	numOfDeadPlayers = 0;
-	menuChoice.push_back(PLAYER);
-	menuChoice.push_back(AI);
-	menuChoice.push_back(NONE);
-	menuChoice.push_back(NONE);
+	numberOfPlayers = 0;
 	current_player = 0;
 	game_ready_to_start = false;
-	int numberOfPlayers= 0;
+	// default settings:
+	menuChoice.push_back( PLAYER );
+	menuChoice.push_back( AI );
+	menuChoice.push_back( NONE );
+	menuChoice.push_back( NONE );
 }
 
 Game::~Game()
@@ -35,10 +37,10 @@ Game::~Game()
 bool inBoxOnAxis( int firstPoint, int secondPoint, int thirdPoint, int forthPoint )
 {
 	if( firstPoint > secondPoint ) {
-		std::swap ( firstPoint, secondPoint );
+		std::swap( firstPoint, secondPoint );
 	}
 	if( thirdPoint > forthPoint ) {
-		std::swap ( thirdPoint, forthPoint );
+		std::swap( thirdPoint, forthPoint );
 	}
 	return std::max( firstPoint, thirdPoint ) <= std::min( secondPoint, forthPoint );
 }
@@ -154,14 +156,9 @@ bool Game::playerOutOfTrack( size_t num )
 	return false;
 }
 
-void Game::turnOfPlayer( size_t num, int direction )
+void Game::turnOfPlayer( size_t num, int direction, int& numOfCrushedCar )
 {
-	//int direction = reader.readPlayersChoice( num );
-	//current_player %= players.size();
-	//current_player++;
-	//current_player %= players.size();
 	players[num].move( direction, map.getSize() );
-	Coordinates c = players[num].getPosition();
 	if( !players[num].directionIsValid( map.getSize() ) && !finishLineIntersectsWithPlayer( num ) ) {
 		// Смысл: если на скорости пересек финиш и выехал за пределы поля ЗА финишом - считается, что победил
 		players[num].die();
@@ -169,19 +166,19 @@ void Game::turnOfPlayer( size_t num, int direction )
 		std::cout << "Player " << num + 1 << " is dead" << std::endl;
 		return;
 	}
-	int crashedPlayer = playerCrashedIntoCar( num );
-	if( crashedPlayer != -1 ) {
+	numOfCrushedCar = playerCrashedIntoCar( num );
+	if( numOfCrushedCar != -1 ) {
 		players[num].goToStart();
-		clearPlayersState( crashedPlayer );
-		players[crashedPlayer].goToStart();
-		showPlayersState( crashedPlayer );
-		return ;
+		clearPlayersState( numOfCrushedCar );
+		players[numOfCrushedCar].goToStart();
+		showPlayersState( numOfCrushedCar );
+		return;
 	}
 	if( playerOutOfTrack( num ) ) {
 		players[num].die();
 		++numOfDeadPlayers;
 		std::cout << "Player " << num + 1 << " is dead" << std::endl;
-		return ;
+		return;
 	}
 	return;
 }
@@ -222,13 +219,8 @@ void Game::initPlayers( int numberOfPlayers )
 }
 
 
-void Game::initPlayers() {
-	numberOfPlayers = 0;
-	for( int i = 0; i < 4; i++ ) {
-		if( menuChoice[i] != NONE ) {
-			numberOfPlayers++;
-		}
-	}
+void Game::initPlayers()
+{
 	if( numberOfPlayers > startCoordinates.size() ) {
 		throw std::runtime_error( "Too many players on field" );
 	}
@@ -237,48 +229,20 @@ void Game::initPlayers() {
 	}
 }
 
+void Game::calculateNumOfPlayers()
+{
+	numberOfPlayers = 0;
+	for( int i = 0; i < 4; i++ ) {
+		if( menuChoice[i] != NONE ) {
+			numberOfPlayers++;
+		}
+	}
+}
+
 void Game::start( int argc, char* argv[] )
 {
-	/*visual start*/
-	Drawing drawing_module(this, map, cars );
+	Drawing drawing_module( this, map );
 	drawing_module.draw( argc, argv ); // Main визуализатора
-	/*visual end*/
-
-	/*int n = 2; // Debug option
-	initPlayers( n ); 
-	initPlayersPositionsInMap(); // На карте проставляются координаты машинок
-	std::cout << "Game has been started. Gl hf!" << std::endl;
-	int player;
-	while( ( player = getPlayerOnFinish() ) == -1 ) { // -1 - никто пока к финишу не пришел
-		for( size_t i = 0; i < players.size(); ++i ) {
-			if( players[i].playerIsAlive() ) {
-				clearPlayersState( i );
-				turnOfPlayer( i ); // todo: AI: занести его в players[] и с помощью API получать следующих ход(см документацию) 
-				if( players[i].playerIsAlive() ) { // Если не вылетел за границы
-					showPlayersState( i );
-				}
-				map.print(); // Вывод поля на консоль
-			}
-		}
-		if( numOfDeadPlayers == players.size() ) {
-			break;
-		}
-	}
-	if( numOfDeadPlayers == players.size() ) {
-		fatalFinish();
-		return;
-	}
-	finish( player );*/
-}
-
-void Game::finish( size_t winner )
-{
-	std::cout << "Player number " << winner + 1 << " is winner! Congratulations!!!" << std::endl;
-}
-
-void Game::fatalFinish()
-{
-	std::cout << "All players are dead! Congratulations ^_^" << std::endl;
 }
 
 PointsInformation Game::getPlayersBasePoints( size_t num )  // Frontend: Для Frontend'a - получение точек для отрисовки
@@ -293,4 +257,9 @@ PointsInformation Game::getPlayersBasePoints( size_t num )  // Frontend: Для 
 		throw std::invalid_argument( error );
 	}
 	return PointsInformation( players[num].playerIsAlive(), players[num].getPreviousPosition(), players[num].getPosition() );
+}
+
+bool Game::playerIsAlive( int player )
+{
+	return players[player].playerIsAlive();
 }
