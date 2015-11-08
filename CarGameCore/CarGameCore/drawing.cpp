@@ -84,7 +84,7 @@ void Drawing::drawMenu()
 	void* font = GLUT_BITMAP_TIMES_ROMAN_24;
 	glColor3f( 255, 255, 255 );
 	renderBitmapString( width*0.33, height*0.9, 0, font, "Please, choose players" );
-	//рисуем подсвеку выделеного пункта меню
+	//рисуем подсветку выделеного пункта меню
 	for( int i = 0; i < size; ++i ) {
 		switch( game->menuChoice[i] ) {
 			case PLAYER:
@@ -141,6 +141,7 @@ void Drawing::drawMenu()
 		renderBitmapString( i*width / size, height*0.5, 0, font, "AI" );
 		renderBitmapString( i*width / size, height*0.4, 0, font, "NONE" );
 	}
+	glColor3f(255, 255, 255);
 }
 
 // load image from file to texture
@@ -179,6 +180,9 @@ void Drawing::load()
 				break;
 			case Green:
 				car_filename = "..\\images\\car_green.png";
+				break;
+			case Yellow:
+				car_filename = "..\\images\\car_orange.png";
 				break;
 			default:
 				car_filename = "..\\images\\car_red.png";
@@ -290,8 +294,21 @@ int Drawing::clickButton( int x, int y )
 
 void Drawing::initCars()
 {
+	int j = 0;
 	for( size_t i = 0; i < game->numberOfPlayers; ++i ) {
-		cars.push_back( Car( Green ) ); // todo: цветовая заглушка
+		if (game->menuChoice[j] != NONE)
+			switch (j)
+			{
+			case 0: cars.push_back(Car(TColor::Red)); break;
+			case 1: cars.push_back(Car(TColor::Green)); break;
+			case 2: cars.push_back(Car(TColor::Blue)); break;
+			case 3: cars.push_back(Car(TColor::Yellow)); break;
+			}
+		else
+		{
+			i--;
+		}
+		j++;
 	}
 	load(); // Загрузка текстур + машинок
 }
