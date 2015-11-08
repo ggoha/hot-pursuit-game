@@ -204,26 +204,23 @@ void Drawing::OnMove( int direction )
 			OnDeathAll();
 			return;
 		}
-		PointsInformation pointInfo = game->getPlayersBasePoints( currentPlayer );
-		cars[game->current_player].MoveTo( Coord( pointInfo.currentCoordinates.x, pointInfo.currentCoordinates.y ),
-										   !pointInfo.isAlive );
 
+		PointsInformation pointInfo = game->getPlayersBasePoints( currentPlayer );
+		if( !pointInfo.isAlive ) {
+			OnDeath( currentPlayer );
+			game->toNextPlayer();
+			return;
+		}
+
+		cars[game->current_player].MoveTo( Coord( pointInfo.currentCoordinates.x, pointInfo.currentCoordinates.y ),
+										   !pointInfo.isAlive ); // Рисует ход
 		if( numOfCrushedCar != -1 ) { // Вторая машина отправляется на старт
 			PointsInformation crushedCurPointInfo = game->getPlayersBasePoints( numOfCrushedCar );
 			cars[numOfCrushedCar].MoveTo( Coord( crushedCurPointInfo.currentCoordinates.x, crushedCurPointInfo.currentCoordinates.y ),
 										  !crushedCurPointInfo.isAlive );
 		}
 
-		if( !pointInfo.isAlive ) {
-			OnDeath( currentPlayer );
-		}
-
-		++game->current_player; // Поиск живых игроков
-		game->current_player %= game->numberOfPlayers;
-		while( !game->playerIsAlive( game->current_player ) ) {
-			++game->current_player;
-			game->current_player %= game->numberOfPlayers;
-		}
+		game->toNextPlayer();
 	}
 }
 

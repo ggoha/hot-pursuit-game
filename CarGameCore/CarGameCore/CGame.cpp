@@ -229,3 +229,13 @@ void Game::resetSettings()
 	game_ready_to_start = false;
 	players.clear();
 }
+
+void Game::toNextPlayer()
+{
+	++current_player; // Поиск живых игроков
+	current_player %= numberOfPlayers;
+	while( !players[current_player].playerIsAlive() ) {
+		++current_player;
+		current_player %= numberOfPlayers;
+	}
+}

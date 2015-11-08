@@ -54,6 +54,7 @@ public:
 	bool playerIsAlive( int player );
 	int getPlayerOnFinish();
 	void resetSettings();
+	void toNextPlayer();
 
 private:
 	Map map;
