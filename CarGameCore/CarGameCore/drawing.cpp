@@ -182,6 +182,9 @@ void Drawing::load()
 			case Green:
 				car_filename = "..\\images\\car_green.png";
 				break;
+			case Yellow:
+				car_filename = "..\\images\\car_orange.png";
+				break;
 			default:
 				car_filename = "..\\images\\car_red.png";
 		}
@@ -320,20 +323,29 @@ int Drawing::clickButton( int x, int y )
 		width = glutGet( GLUT_WINDOW_WIDTH );
 	y = height - y;
 	int size = game->menuChoice.size();
+	std::vector<TColor> colours;
 	//обработка меню
 	for( int i = 0; i < size; i++ ) {
-		if( x > i*width / size && x < ( i + 1 )*width / size && y > height*0.55 && y < height*0.65 )
+		if( x > i*width / size && x < (i + 1)*width / size && y > height*0.55 && y < height*0.65 ) {
 			game->menuChoice[i] = PLAYER;
-		if( x > i*width / size && x < ( i + 1 )*width / size && y > height*0.45 && y < height*0.55 )
+		}
+		if( x > i*width / size && x < (i + 1)*width / size && y > height*0.45 && y < height*0.55 ) {
 			game->menuChoice[i] = AI;
+		}
 		if( x > i*width / size && x < ( i + 1 )*width / size && y > height*0.35 && y < height*0.45 )
 			game->menuChoice[i] = NONE;
 	}
 	// Обработка "Далее"
 	if( y < height*0.25 ) { // Нажали "Далее"
+		// Заполнение цветов
+		for( int i = 0; i < size; i++ ) {
+			if( game->menuChoice[i] == PLAYER || game->menuChoice[i] == AI ) {
+				colours.push_back( (TColor)i );
+			}
+		}
 		game->calculateNumOfPlayers();
 		game->initPlayers();
-		initCars();
+		initCars(colours);
 		for( int i = 0; i < game->numberOfPlayers; i++ ) {
 			PointsInformation pi = game->getPlayersBasePoints( i );
 			Coord c;
@@ -349,10 +361,10 @@ int Drawing::clickButton( int x, int y )
 		return -1;
 }
 
-void Drawing::initCars()
+void Drawing::initCars( std::vector<TColor> colours )
 {
 	for( size_t i = 0; i < game->numberOfPlayers; ++i ) {
-		cars.push_back( Car( Green ) ); // todo: цветовая заглушка
+		cars.push_back( Car( colours[i] ) ); // todo: цветовая заглушка
 	}
 	load(); // Загрузка текстур + машинок
 }

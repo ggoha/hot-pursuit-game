@@ -37,6 +37,6 @@ private:
 	static std::vector<Car> cars;
 	static void OnMove( int direction );
 	static bool menu;
-	static void initCars();
+	static void initCars(std::vector<TColor> colours);
 };
 #endif /* TREE_20100118 */
