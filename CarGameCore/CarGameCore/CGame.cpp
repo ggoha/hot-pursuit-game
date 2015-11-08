@@ -198,7 +198,7 @@ void Game::calculateNumOfPlayers()
 
 void Game::start( int argc, char* argv[] )
 {
-	Drawing drawing_module( this, map );
+	Drawing drawing_module( this, map.getMapInOpenGLView() );
 	drawing_module.startDrawing( argc, argv ); // Визуализатор
 }
 
