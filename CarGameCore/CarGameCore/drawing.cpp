@@ -191,8 +191,7 @@ void Drawing::OnMove( int direction )
 {
 	int winner = game->getPlayerOnFinish();
 	if( winner != -1 ) {
-		int x = 10050;
-		// todo: MessageBox: Игрок под номером winner выиграл
+		::MessageBox( NULL, L"Победа", L"Игрок победил", MB_OK );
 	}
 
 	int currentPlayer = game->current_player;
@@ -270,7 +269,7 @@ int Drawing::clickButton( int x, int y )
 			game->menuChoice[i] = NONE;
 	}
 	game->calculateNumOfPlayers();
-	// Обработка далее
+	// Обработка "Далее"
 	if( y < height*0.25 ) { // Нажали "Далее"
 		game->initPlayers();
 		initCars();
