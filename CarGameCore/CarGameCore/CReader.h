@@ -18,7 +18,7 @@ struct Line {
 		secondPoint = Coordinates( 0, 0 );
 	}
 
-	Line( Coordinates x, Coordinates y ) :
+	Line( Coordinates x, Coordinates y ):
 		firstPoint( x ), secondPoint( y )
 	{
 	}
@@ -33,15 +33,14 @@ struct MapFileInput {
 		size = Size( 0, 0 );
 	}
 
-	MapFileInput( const Field& newField, const Size& newSize, const std::vector<Coordinates>& positions, const std::vector<Car>& newCars, const Line& line ) :
-		field( newField ), size( newSize ), startPositions( positions ), finishLine( line ), cars( newCars )
+	MapFileInput( const Field& newField, const Size& newSize, const std::vector<Coordinates>& positions, const Line& line ):
+		field( newField ), size( newSize ), startPositions( positions ), finishLine( line )
 	{
 	}
 
 	Field field;
 	Size size;
 	std::vector<Coordinates> startPositions;
-	std::vector<Car> cars;
 	Line finishLine;
 };
 
@@ -51,7 +50,7 @@ public:
 
 	~Reader();
 
-	MapFileInput readData( const std::string& mapPath, const std::string& carPath );
+	MapFileInput readData( const std::string& mapPath );
 
 	PlayersInfo readPlayers();
 

@@ -36,31 +36,30 @@ class Game {
 public:
 	Game();
 
-	Game( const Map& map, const Line& finishLine, const Reader& reader, const std::vector<Coordinates>& coordinates, const std::vector<Car>& cars );
+	Game( const Map& map, const Line& finishLine, const Reader& reader, const std::vector<Coordinates>& coordinates);
 
 	~Game();
 
 	int current_player;
-	void start( int argc, char* argv[] );
-	void finish( size_t winner );
-	void fatalFinish();
-	void turnOfPlayer( size_t num, int dir );
-	void Game::initPlayers();
-	PointsInformation getPlayersBasePoints( size_t num ); // Отдаем Frontend у
+	int numOfDeadPlayers;
 	std::vector<int> menuChoice;
 	bool game_ready_to_start;
 	int numberOfPlayers;
+	void start( int argc, char* argv[] );
+	void turnOfPlayer( size_t num, int dir, int& numOfCrushedCar );
+	void Game::initPlayers();
+	PointsInformation getPlayersBasePoints( size_t num ); // Отдаем Frontend у
+	void calculateNumOfPlayers();
+	bool playerIsAlive( int player );
+	int getPlayerOnFinish();
 
 private:
 	Map map;
 	Reader reader;
-	size_t numOfDeadPlayers;
 	std::vector<Player> players;
 	Line finishLine;
 	std::vector<Coordinates> startCoordinates;
-	std::vector<Car> cars;
 	void initPlayers( int numberOfPlayers );
-	int getPlayerOnFinish();
 	bool finishLineIntersectsWithPlayer( size_t num );
 	int playerCrashedIntoCar( size_t num );
 	bool playerOutOfTrack( size_t num );
