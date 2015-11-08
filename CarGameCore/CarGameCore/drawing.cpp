@@ -35,7 +35,7 @@ void Drawing::timer( int value )
 
 void Drawing::display()
 {
-	//	glClearColor(1.0, 1.0, 1.0, 0.0); // clear background to white
+//	glClearColor(0.0, 0.0, 0.0, 0.0); // clear background to white
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); // clear buffers
 
 	if( !menu ) {
@@ -61,6 +61,7 @@ void Drawing::display()
 			glutSwapBuffers(); // if map wasn't reloaded (and buffers weren't swapped), swap buffers
 		}
 	} else {
+		glClearColor(0.0, 0.0, 0.0, 0.0); // clear background to white
 		drawMenu();
 		glFlush(); // flush changes
 		glutSwapBuffers();
@@ -79,12 +80,11 @@ void Drawing::renderBitmapString( float x, float y, float z, void *font, char *s
 
 void Drawing::drawMenu()
 {
-
 	float height = glutGet( GLUT_WINDOW_HEIGHT ),
 		width = glutGet( GLUT_WINDOW_WIDTH );
 	int size = game->menuChoice.size();
 	void* font = GLUT_BITMAP_TIMES_ROMAN_24;
-	glColor3f( 255, 255, 255 );
+	glColor3f( 1.0, 1.0, 1.0 );
 	renderBitmapString( width*0.33, height*0.9, 0, font, "Please, choose players" );
 	//рисуем подсвеку выделеного пункта меню
 	for( int i = 0; i < size; ++i ) {
@@ -131,10 +131,10 @@ void Drawing::drawMenu()
 	//рисуем выбор типа
 	for( int i = 0; i < size; ++i ) {
 		switch( i ) {
-			case( 0 ) : glColor3f( 255, 0, 0 ); break;
-			case( 1 ) : glColor3f( 0, 255, 0 ); break;
-			case( 2 ) : glColor3f( 0, 0, 255 ); break;
-			case( 3 ) : glColor3f( 245, 255, 0 ); break;
+			case( 0 ) : glColor3f( 1.0, 0.0, 0.0 ); break;
+			case( 1 ) : glColor3f( 0.0, 1.0, 0.0 ); break;
+			case( 2 ) : glColor3f( 0.0, 0.0, 1.0 ); break;
+			case( 3 ) : glColor3f( 1.0, 1.0, 0.0 ); break;
 		};
 		char str[2];
 		itoa( i + 1, str, 10 );
@@ -170,6 +170,8 @@ void Drawing::load()
 	//load textures for map
 	Load_texture( "..\\images\\road.png", map.texture_road ); // road
 	Load_texture( "..\\images\\forest.png", map.texture_board ); // board
+	Load_texture("..\\images\\finish.png", map.texture_finish); // board
+
 	//load textures for cars (depends on color)
 	std::string car_filename;
 	for( size_t i = 0; i < cars.size(); i++ ) {

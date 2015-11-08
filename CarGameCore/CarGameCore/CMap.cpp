@@ -103,10 +103,12 @@ void Map::reload()
 	for( int i = 0; i < n; i++ ) {
 		for( int j = 0; j < m; j++ ) {
 			glEnable( GL_TEXTURE_2D );
-			if( map[i][j] == 1 ) {
-				glBindTexture( GL_TEXTURE_2D, texture_board ); // load a texture of board (forest)
-			} else {
-				glBindTexture( GL_TEXTURE_2D, texture_road ); // load a texture of road
+			switch (map[i][j])
+			{
+			case 1: glBindTexture(GL_TEXTURE_2D, texture_board); break; // load a texture of board (forest)
+			case 0: glBindTexture(GL_TEXTURE_2D, texture_road); break; // load a texture of board (road)
+			case 2: glBindTexture(GL_TEXTURE_2D, texture_finish); break; // load a texture of board (start)
+			case 3: glBindTexture(GL_TEXTURE_2D, texture_finish); break; // load a texture of board (finish)
 			}
 			//calculate coordinates
 			float left = j * cell_size + indent.x;
@@ -120,6 +122,7 @@ void Map::reload()
 			glTexCoord2f( 1.0f, 1.0f ); glVertex3f( right, top, 0.0f );
 			glTexCoord2f( 0.0f, 1.0f ); glVertex3f( left, top, 0.0f );
 			glEnd();
+			glDisable(GL_TEXTURE_2D);
 		}
 	}
 	glutSwapBuffers();
@@ -158,6 +161,7 @@ void Map::Draw()
 	glTexCoord2f( 1.0f, 1.0f ); glVertex3f( width, height, 0.0f );
 	glTexCoord2f( 0.0f, 1.0f ); glVertex3f( 0, height, 0.0f );
 	glEnd();
+	glDisable(GL_TEXTURE_2D);
 
 }
 

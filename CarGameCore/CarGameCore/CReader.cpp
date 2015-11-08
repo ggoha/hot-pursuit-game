@@ -42,7 +42,28 @@ MapFileInput Reader::readData( const std::string& mapPath )
 	Size size( n, m );
 	std::pair<Field, std::vector<Coordinates>> gameFieldInfo = readMap( n, m, fin );
 	Line finishLine = readFinishLine( fin );
+	addFinishLine(&gameFieldInfo, finishLine);
 	return MapFileInput( gameFieldInfo.first, size, gameFieldInfo.second, finishLine );
+}
+
+void Reader::addFinishLine(std::pair<Field, std::vector<Coordinates>>* gameFieldInfo, Line finishLine)
+{
+	gameFieldInfo->first[finishLine.firstPoint.x][finishLine.firstPoint.y] = 3;
+	gameFieldInfo->first[finishLine.secondPoint.x][finishLine.secondPoint.y] = 3;
+	if (finishLine.firstPoint.y == finishLine.secondPoint.y)
+	{
+		int min = std::min(finishLine.firstPoint.x, finishLine.secondPoint.x);
+		int max = std::max(finishLine.firstPoint.x, finishLine.secondPoint.x);
+		for (int i = min; i < max; i++)
+			gameFieldInfo->first[i][finishLine.secondPoint.y] = 3;
+	}
+	if (finishLine.firstPoint.x == finishLine.secondPoint.x)
+	{
+		int min = std::min(finishLine.firstPoint.y, finishLine.secondPoint.y);
+		int max = std::max(finishLine.firstPoint.y, finishLine.secondPoint.y);
+		for (int i = min; i < max; i++)
+			gameFieldInfo->first[finishLine.secondPoint.x][i] = 3;
+	}
 }
 
 Line Reader::readFinishLine( std::ifstream& input )
@@ -53,6 +74,7 @@ Line Reader::readFinishLine( std::ifstream& input )
 		std::string error = "Bad file with map: invalid coordinates of finish line";
 		throw std::runtime_error( error );
 	}
+
 	return Line( Coordinates( firstPointX - 1, firstPointY - 1 ), Coordinates( secondPointX - 1, secondPointY - 1 ) );
 }
 

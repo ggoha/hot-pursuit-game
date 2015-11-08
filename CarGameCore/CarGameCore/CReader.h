@@ -8,6 +8,7 @@
 #include <exception>
 #include <string>
 #include <assert.h>
+#include <algorithm>
 
 typedef std::vector< std::vector<int> > Field;
 
@@ -60,4 +61,5 @@ private:
 	std::pair<Field, std::vector<Coordinates>> readMap( const int n, const int m, std::ifstream& fin );
 
 	Line readFinishLine( std::ifstream& fin );
+	void addFinishLine(std::pair<Field, std::vector<Coordinates>>* gameFieldInfo, Line finishLine);
 };

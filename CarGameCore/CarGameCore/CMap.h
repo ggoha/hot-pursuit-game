@@ -35,6 +35,7 @@ public:
 
 	GLuint texture_board;
 	GLuint texture_road;
+	GLuint texture_finish;
 	GLuint texture_map;
 
 private:

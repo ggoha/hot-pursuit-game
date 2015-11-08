@@ -85,6 +85,7 @@ void Car::Draw( float cell_size, WCoord indent ) {
 	glTexCoord2f( 0.0f, 1.0f ); glVertex3f( Dx, Dy, 0.0f );
 	glEnd();
 	glDisable( GL_BLEND );
+	glDisable(GL_TEXTURE_2D);
 	glDepthMask( GL_TRUE );
 	Sleep( 1 );
 }
