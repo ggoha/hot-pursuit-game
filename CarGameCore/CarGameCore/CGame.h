@@ -52,6 +52,7 @@ public:
 	void calculateNumOfPlayers();
 	bool playerIsAlive( int player );
 	int getPlayerOnFinish();
+	void clearPlayers();
 
 private:
 	Map map;

@@ -23,6 +23,9 @@ private:
 	static int clickButton( int x, int y );
 	static void display();
 
+	static void OnDeath( int player );
+	static void OnDeathAll();
+	static void OnWin( int winner );
 	static void drawMenu();
 	static void renderBitmapString( float x, float y, float z, void *font, char *string );
 	static void reshape( int width, int height );

@@ -49,6 +49,9 @@ void Drawing::display()
 		for( int j = 0; j < cars[0].frames_per_step; j++ ) {
 			map.Draw();
 			for( size_t i = 0; i < cars.size(); i++ ) {
+				if( !game->playerIsAlive(i) ) { // Машина умерла - не рисуем
+					continue;
+				}
 				cars[i].Draw( map.Get_cell_size(), map.Get_indent() ); // draw car
 			}
 			glFlush();
@@ -191,16 +194,14 @@ void Drawing::OnMove( int direction )
 {
 	int winner = game->getPlayerOnFinish();
 	if( winner != -1 ) {
-		::MessageBox( NULL, L"Победа", L"Игрок победил", MB_OK );
+		OnWin( winner );
 	}
-
 	int currentPlayer = game->current_player;
-	// Если игрок мертв - его машина остается стоять там, где разбилась
 	if( game->game_ready_to_start && game->playerIsAlive( currentPlayer ) ) {
 		int numOfCrushedCar;
 		game->turnOfPlayer( currentPlayer, direction, numOfCrushedCar );
 		if( game->numberOfPlayers == game->numOfDeadPlayers ) {
-			// todo: MessageBox: Все умерли игра окончена
+			OnDeathAll(); 
 		}
 		PointsInformation pointInfo = game->getPlayersBasePoints( currentPlayer );
 		cars[game->current_player].MoveTo( Coord( pointInfo.currentCoordinates.x, pointInfo.currentCoordinates.y ),
@@ -212,9 +213,70 @@ void Drawing::OnMove( int direction )
 										  !crushedCurPointInfo.isAlive );
 		}
 
-		++game->current_player;
+		if( !pointInfo.isAlive ) {
+			OnDeath( currentPlayer );
+		}
+
+		++game->current_player;		
 		game->current_player %= game->numberOfPlayers;
+		// just debug
+		wchar_t buffer[256];
+		::wsprintf( buffer, L"Сейчас будет ход №%d игрока", game->current_player );
+		::MessageBox( nullptr, buffer, L"kjk!", MB_OK );
 	}
+}
+
+void Drawing::OnWin( int winner )
+{
+	wchar_t buffer[256];
+	::wsprintf( buffer, L"Игрок №%d победил! Хотите начать заново?", winner + 1 );
+	int result = ::MessageBox( nullptr, buffer, L"Победа!", MB_OKCANCEL );
+	if( result == 0 ) {
+		throw std::runtime_error( "OnMove: can't show message box" );
+	}
+	if( result == 1 ) {
+		// ok
+		game->numOfDeadPlayers = 0;
+		game->numberOfPlayers = 0;
+		game->current_player = 0;
+		game->game_ready_to_start = false;
+		game->clearPlayers();
+		menu = true;
+		cars.clear();
+	}
+	if( result == 2 ) {
+		// cancel
+		exit( 0 );
+	}
+}
+
+void Drawing::OnDeathAll()
+{
+	int result = ::MessageBox( nullptr, L"Все мертвы. Хотите начать заново?", L"Все мертвы", MB_OKCANCEL );
+	if( result == 0 ) {
+		throw std::runtime_error( "OnDeathAll: can't show message box" );
+	}
+	if( result == 1 ) {
+		// ok
+		game->numOfDeadPlayers = 0;
+		game->numberOfPlayers = 0;
+		game->current_player = 0;
+		game->game_ready_to_start = false;
+		game->clearPlayers();
+		menu = true;
+		cars.clear();
+	}
+	if( result == 2 ) {
+		// cancel
+		exit( 0 );
+	}
+}
+
+void Drawing::OnDeath( int currentPlayer )
+{
+	wchar_t buffer[256];
+	::wsprintf( buffer, L"Игрок №%d мертв", currentPlayer + 1 );
+	::MessageBox( nullptr, buffer, L"БАБАХ", MB_OK );
 }
 
 void Drawing::normalKeyHandler( unsigned char key, int x, int y )

@@ -13,7 +13,6 @@ Game::Game()
 	menuChoice.push_back( AI );
 	menuChoice.push_back( NONE );
 	menuChoice.push_back( NONE );
-
 }
 
 Game::Game( const Map& newMap, const Line& newLine, const Reader& newReader, const std::vector<Coordinates>& coordinates ):
@@ -163,7 +162,6 @@ void Game::turnOfPlayer( size_t num, int direction, int& numOfCrushedCar )
 		// Смысл: если на скорости пересек финиш и выехал за пределы поля ЗА финишом - считается, что победил
 		players[num].die();
 		++numOfDeadPlayers;
-		std::cout << "Player " << num + 1 << " is dead" << std::endl;
 		return;
 	}
 	numOfCrushedCar = playerCrashedIntoCar( num );
@@ -177,7 +175,6 @@ void Game::turnOfPlayer( size_t num, int direction, int& numOfCrushedCar )
 	if( playerOutOfTrack( num ) ) {
 		players[num].die();
 		++numOfDeadPlayers;
-		std::cout << "Player " << num + 1 << " is dead" << std::endl;
 		return;
 	}
 	return;
@@ -208,7 +205,7 @@ void Game::showPlayersState( size_t num ) // Рисует изображение
 }
 
 
-void Game::initPlayers( int numberOfPlayers )
+void Game::initPlayers()
 {
 	if( numberOfPlayers > startCoordinates.size() ) {
 		throw std::runtime_error( "Too many players on field" );
@@ -218,15 +215,9 @@ void Game::initPlayers( int numberOfPlayers )
 	}
 }
 
-
-void Game::initPlayers()
+void Game::clearPlayers()
 {
-	if( numberOfPlayers > startCoordinates.size() ) {
-		throw std::runtime_error( "Too many players on field" );
-	}
-	for( size_t i = 0; i < numberOfPlayers; ++i ) {	// Все игроки на стартовых позициях, которые были нанесены на карту
-		players.push_back( Player( startCoordinates[i], true ) );
-	}
+	players.clear();
 }
 
 void Game::calculateNumOfPlayers()
