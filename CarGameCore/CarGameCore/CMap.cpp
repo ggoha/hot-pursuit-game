@@ -127,6 +127,18 @@ void Map::reload()
 	need_reload = false;
 }
 
+Map Map::getMapInOpenGLView() {
+	Map m(size, map);
+	m.map.resize( size.first );
+	for( int i = 0; i < size.first; i++ ) {
+		m.map[i].resize(size.second);
+		for( int j = 0; j < size.second; j++ ){
+			m.map[i][j] = map[size.first - 1 - i][j];
+		}
+	}
+	return m;
+}
+
 void Map::Draw()
 {
 	if( need_reload ) {

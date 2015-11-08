@@ -1,7 +1,6 @@
 ﻿#include "CGame.h"
 #include "Drawing.h"
 
-
 Game::Game()
 {
 	numOfDeadPlayers = 0;
@@ -13,7 +12,6 @@ Game::Game()
 	menuChoice.push_back( AI );
 	menuChoice.push_back( NONE );
 	menuChoice.push_back( NONE );
-
 }
 
 Game::Game( const Map& newMap, const Line& newLine, const Reader& newReader, const std::vector<Coordinates>& coordinates ):
@@ -163,61 +161,21 @@ void Game::turnOfPlayer( size_t num, int direction, int& numOfCrushedCar )
 		// Смысл: если на скорости пересек финиш и выехал за пределы поля ЗА финишом - считается, что победил
 		players[num].die();
 		++numOfDeadPlayers;
-		std::cout << "Player " << num + 1 << " is dead" << std::endl;
 		return;
 	}
 	numOfCrushedCar = playerCrashedIntoCar( num );
 	if( numOfCrushedCar != -1 ) {
 		players[num].goToStart();
-		clearPlayersState( numOfCrushedCar );
 		players[numOfCrushedCar].goToStart();
-		showPlayersState( numOfCrushedCar );
 		return;
 	}
 	if( playerOutOfTrack( num ) ) {
 		players[num].die();
 		++numOfDeadPlayers;
-		std::cout << "Player " << num + 1 << " is dead" << std::endl;
 		return;
 	}
 	return;
 }
-
-void Game::initPlayersPositionsInMap()
-{
-	for( size_t i = 0; i < players.size(); ++i ) {
-		Coordinates currentCoordinates = players[i].getPosition();
-		map.setPosition( currentCoordinates.x, currentCoordinates.y );
-	}
-}
-
-void Game::clearPlayersState( size_t num ) // Стирает изображение игрока с поля
-{
-	Coordinates old = players[num].getPreviousPosition();
-	Coordinates now = players[num].getPosition();
-	map.clearPosition( old.x, old.y );
-	map.clearPosition( now.x, now.y );
-}
-
-void Game::showPlayersState( size_t num ) // Рисует изображение игрока на поле
-{
-	Coordinates previousCoordinates = players[num].getPreviousPosition();
-	Coordinates currentCoordinates = players[num].getPosition();
-	map.setPosition( previousCoordinates.x, previousCoordinates.y );
-	map.setPosition( currentCoordinates.x, currentCoordinates.y );
-}
-
-
-void Game::initPlayers( int numberOfPlayers )
-{
-	if( numberOfPlayers > startCoordinates.size() ) {
-		throw std::runtime_error( "Too many players on field" );
-	}
-	for( size_t i = 0; i < numberOfPlayers; ++i ) {	// Все игроки на стартовых позициях, которые были нанесены на карту
-		players.push_back( Player( startCoordinates[i], true ) );
-	}
-}
-
 
 void Game::initPlayers()
 {
@@ -229,20 +187,19 @@ void Game::initPlayers()
 	}
 }
 
-void Game::calculateNumOfPlayers()
+void Game::calculateNumOfPlayers() 
 {
-	numberOfPlayers = 0;
-	for( int i = 0; i < 4; i++ ) {
+	for( size_t i = 0; i < 4; ++i ) {
 		if( menuChoice[i] != NONE ) {
-			numberOfPlayers++;
+			++numberOfPlayers;
 		}
 	}
 }
 
 void Game::start( int argc, char* argv[] )
 {
-	Drawing drawing_module( this, map );
-	drawing_module.draw( argc, argv ); // Main визуализатора
+	Drawing drawing_module( this,  map.getMapInOpenGLView() );
+	drawing_module.startDrawing( argc, argv ); // Визуализатор
 }
 
 PointsInformation Game::getPlayersBasePoints( size_t num )  // Frontend: Для Frontend'a - получение точек для отрисовки
@@ -262,4 +219,23 @@ PointsInformation Game::getPlayersBasePoints( size_t num )  // Frontend: Для 
 bool Game::playerIsAlive( int player )
 {
 	return players[player].playerIsAlive();
+}
+
+void Game::resetSettings()
+{
+	numOfDeadPlayers = 0;
+	numberOfPlayers = 0;
+	current_player = 0;
+	game_ready_to_start = false;
+	players.clear();
+}
+
+void Game::toNextPlayer()
+{
+	++current_player; // Поиск живых игроков
+	current_player %= numberOfPlayers;
+	while( !players[current_player].playerIsAlive() ) {
+		++current_player;
+		current_player %= numberOfPlayers;
+	}
 }

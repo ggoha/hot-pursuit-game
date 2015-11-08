@@ -14,7 +14,7 @@
 class Drawing {
 public:
 	Drawing( Game* game, Map &map_data );
-	void draw( int argc, char * argv[] );
+	void startDrawing( int argc, char * argv[] );
 	static void Load_texture( const char*, GLuint& texture );
 
 private:
@@ -22,7 +22,11 @@ private:
 	static void mouseButton( int button, int state, int x, int y );
 	static int clickButton( int x, int y );
 	static void display();
+	static Coord Drawing::translateCoords( Coord coord );
 
+	static void OnDeath( int player );
+	static void OnDeathAll();
+	static void OnWin( int winner );
 	static void drawMenu();
 	static void renderBitmapString( float x, float y, float z, void *font, char *string );
 	static void reshape( int width, int height );
@@ -33,6 +37,6 @@ private:
 	static std::vector<Car> cars;
 	static void OnMove( int direction );
 	static bool menu;
-	static void initCars();
+	static void initCars(std::vector<TColor> colours);
 };
 #endif /* TREE_20100118 */

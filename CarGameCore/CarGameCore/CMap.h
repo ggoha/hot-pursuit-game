@@ -30,7 +30,7 @@ public:
 	void Draw();
 	float Get_cell_size();
 	WCoord Get_indent();
-
+	Map getMapInOpenGLView();
 	bool Need_to_reload();
 
 	GLuint texture_board;

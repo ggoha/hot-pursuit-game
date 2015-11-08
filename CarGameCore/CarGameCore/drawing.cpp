@@ -1,5 +1,4 @@
 ﻿#include "Drawing.h"
-#include "CGame.h"
 
 Map Drawing::map; // static data members must be explicitly defined in exactly one compilation unit
 std::vector<Car> Drawing::cars;
@@ -49,6 +48,9 @@ void Drawing::display()
 		for( int j = 0; j < cars[0].frames_per_step; j++ ) {
 			map.Draw();
 			for( size_t i = 0; i < cars.size(); i++ ) {
+				if( !game->playerIsAlive( i ) ) { // Машина умерла - не рисуем
+					continue;
+				}
 				cars[i].Draw( map.Get_cell_size(), map.Get_indent() ); // draw car
 			}
 			glFlush();
@@ -180,6 +182,9 @@ void Drawing::load()
 			case Green:
 				car_filename = "..\\images\\car_green.png";
 				break;
+			case Yellow:
+				car_filename = "..\\images\\car_orange.png";
+				break;
 			default:
 				car_filename = "..\\images\\car_red.png";
 		}
@@ -187,33 +192,95 @@ void Drawing::load()
 	}
 }
 
+// переводит координаты из winapi в opengl координаты
+
+Coord Drawing::translateCoords(Coord coord){
+	Coord c;
+	c.x = coord.x;
+	c.y = map.getSize().second - coord.y - 1;
+	return c;
+}
+
+
 void Drawing::OnMove( int direction )
 {
 	int winner = game->getPlayerOnFinish();
 	if( winner != -1 ) {
-		::MessageBox( NULL, L"Победа", L"Игрок победил", MB_OK );
+		OnWin( winner );
+		return;
 	}
-
 	int currentPlayer = game->current_player;
-	// Если игрок мертв - его машина остается стоять там, где разбилась
 	if( game->game_ready_to_start && game->playerIsAlive( currentPlayer ) ) {
 		int numOfCrushedCar;
 		game->turnOfPlayer( currentPlayer, direction, numOfCrushedCar );
 		if( game->numberOfPlayers == game->numOfDeadPlayers ) {
-			// todo: MessageBox: Все умерли игра окончена
+			OnDeathAll();
+			return;
 		}
-		PointsInformation pointInfo = game->getPlayersBasePoints( currentPlayer );
-		cars[game->current_player].MoveTo( Coord( pointInfo.currentCoordinates.x, pointInfo.currentCoordinates.y ),
-										   !pointInfo.isAlive );
 
+		PointsInformation pointInfo = game->getPlayersBasePoints( currentPlayer );
+		if( !pointInfo.isAlive ) {
+			OnDeath( currentPlayer );
+			game->toNextPlayer();
+			return;
+		}
+
+		cars[game->current_player].MoveTo( translateCoords(Coord( pointInfo.currentCoordinates.x, pointInfo.currentCoordinates.y )),
+										   !pointInfo.isAlive ); // Рисует ход
 		if( numOfCrushedCar != -1 ) { // Вторая машина отправляется на старт
 			PointsInformation crushedCurPointInfo = game->getPlayersBasePoints( numOfCrushedCar );
-			cars[numOfCrushedCar].MoveTo( Coord( crushedCurPointInfo.currentCoordinates.x, crushedCurPointInfo.currentCoordinates.y ),
+			cars[numOfCrushedCar].MoveTo( translateCoords(Coord( crushedCurPointInfo.currentCoordinates.x, crushedCurPointInfo.currentCoordinates.y )),
 										  !crushedCurPointInfo.isAlive );
 		}
 
-		++game->current_player;
-		game->current_player %= game->numberOfPlayers;
+		game->toNextPlayer();
+	}
+}
+
+void Drawing::OnWin( int winner )
+{
+	wchar_t buffer[256];
+	::wsprintf( buffer, L"Игрок №%d победил! Хотите начать заново?", winner + 1 );
+	int result = ::MessageBox( nullptr, buffer, L"Победа!", MB_OKCANCEL );
+	if( result == 0 ) {
+		throw std::runtime_error( "OnMove: can't show message box" );
+	}
+	if( result == 1 ) {
+		// ok
+		game->resetSettings();
+		menu = true;
+		cars.clear();
+	}
+	if( result == 2 ) {
+		// cancel
+		exit( 0 );
+	}
+}
+
+void Drawing::OnDeathAll()
+{
+	int result = ::MessageBox( nullptr, L"Все мертвы. Хотите начать заново?", L"Все мертвы", MB_OKCANCEL );
+	if( result == 0 ) {
+		throw std::runtime_error( "OnDeathAll: can't show message box" );
+	}
+	if( result == 1 ) {
+		// ok
+		game->resetSettings();
+		menu = true;
+		cars.clear();
+	}
+	if( result == 2 ) {
+		// cancel
+		exit( 0 );
+	}
+}
+
+void Drawing::OnDeath( int currentPlayer )
+{
+	wchar_t buffer[256];
+	::wsprintf( buffer, L"Игрок №%d мертв", currentPlayer + 1 );
+	if( ::MessageBox( nullptr, buffer, L"Авария", MB_OK ) == 0 ) {
+		throw std::runtime_error( "OnDeathAll: can't show message box" );
 	}
 }
 
@@ -247,9 +314,6 @@ void Drawing::normalKeyHandler( unsigned char key, int x, int y )
 		case 51:
 			OnMove( 3 );
 			break;
-		case 27:
-			menu = false;
-			break;
 	}
 }
 
@@ -259,27 +323,36 @@ int Drawing::clickButton( int x, int y )
 		width = glutGet( GLUT_WINDOW_WIDTH );
 	y = height - y;
 	int size = game->menuChoice.size();
+	std::vector<TColor> colours;
 	//обработка меню
 	for( int i = 0; i < size; i++ ) {
-		if( x > i*width / size && x < ( i + 1 )*width / size && y > height*0.55 && y < height*0.65 )
+		if( x > i*width / size && x < (i + 1)*width / size && y > height*0.55 && y < height*0.65 ) {
 			game->menuChoice[i] = PLAYER;
-		if( x > i*width / size && x < ( i + 1 )*width / size && y > height*0.45 && y < height*0.55 )
+		}
+		if( x > i*width / size && x < (i + 1)*width / size && y > height*0.45 && y < height*0.55 ) {
 			game->menuChoice[i] = AI;
+		}
 		if( x > i*width / size && x < ( i + 1 )*width / size && y > height*0.35 && y < height*0.45 )
 			game->menuChoice[i] = NONE;
 	}
-	game->calculateNumOfPlayers();
 	// Обработка "Далее"
 	if( y < height*0.25 ) { // Нажали "Далее"
+		// Заполнение цветов
+		for( int i = 0; i < size; i++ ) {
+			if( game->menuChoice[i] == PLAYER || game->menuChoice[i] == AI ) {
+				colours.push_back( (TColor)i );
+			}
+		}
+		game->calculateNumOfPlayers();
 		game->initPlayers();
-		initCars();
+		initCars(colours);
 		for( int i = 0; i < game->numberOfPlayers; i++ ) {
 			PointsInformation pi = game->getPlayersBasePoints( i );
 			Coord c;
 			c.x = pi.currentCoordinates.x;
 			c.y = pi.currentCoordinates.y;
-			cars[i].current_coords = c;
-			cars[i].next_coords = c;
+			cars[i].current_coords = translateCoords(c);
+			cars[i].next_coords = translateCoords( c );
 			cars[i].current_angle = 0;
 		}
 		game->game_ready_to_start = true;
@@ -288,10 +361,10 @@ int Drawing::clickButton( int x, int y )
 		return -1;
 }
 
-void Drawing::initCars()
+void Drawing::initCars( std::vector<TColor> colours )
 {
 	for( size_t i = 0; i < game->numberOfPlayers; ++i ) {
-		cars.push_back( Car( Green ) ); // todo: цветовая заглушка
+		cars.push_back( Car( colours[i] ) ); // todo: цветовая заглушка
 	}
 	load(); // Загрузка текстур + машинок
 }
@@ -306,7 +379,7 @@ void Drawing::mouseButton( int button, int state, int x, int y )
 		}
 }
 
-void Drawing::draw( int argc, char * argv[] )
+void Drawing::startDrawing( int argc, char * argv[] )
 {
 	glutInit( &argc, argv );
 	glutInitDisplayMode( GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA );
