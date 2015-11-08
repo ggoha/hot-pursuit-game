@@ -5,7 +5,6 @@
 #include "CPlayer.h"
 #include "CReader.h"
 #include "Car.h"
-#include "Drawing.h"
 #include "Common.h"
 #include <vector>
 #include <algorithm>
@@ -13,6 +12,7 @@
 #include <memory>
 #include <map>
 #include <fstream>
+class Drawing;
 
 const int DEFAULT_WINDOW_WIDTH = 500;
 const int DEFAULT_WINDOW_HEIGHT = 500;

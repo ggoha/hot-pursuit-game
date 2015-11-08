@@ -1,4 +1,5 @@
 ﻿#include "CGame.h"
+#include "Drawing.h"
 
 Game::Game()
 {

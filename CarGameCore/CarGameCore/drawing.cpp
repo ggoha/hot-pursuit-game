@@ -1,5 +1,4 @@
 ﻿#include "Drawing.h"
-#include "CGame.h"
 
 Map Drawing::map; // static data members must be explicitly defined in exactly one compilation unit
 std::vector<Car> Drawing::cars;
