@@ -136,7 +136,7 @@ Map Map::getMapInOpenGLView() {
 			m.map[i][j] = map[size.first - 1 - i][j];
 		}
 	}
-	return map;
+	return m;
 }
 
 void Map::Draw()

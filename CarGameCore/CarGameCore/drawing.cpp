@@ -189,6 +189,16 @@ void Drawing::load()
 	}
 }
 
+// переводит координаты из winapi в opengl координаты
+
+Coord Drawing::translateCoords(Coord coord){
+	Coord c;
+	c.x = coord.x;
+	c.y = map.getSize().second - coord.y - 1;
+	return c;
+}
+
+
 void Drawing::OnMove( int direction )
 {
 	int winner = game->getPlayerOnFinish();
@@ -212,11 +222,11 @@ void Drawing::OnMove( int direction )
 			return;
 		}
 
-		cars[game->current_player].MoveTo( Coord( pointInfo.currentCoordinates.x, pointInfo.currentCoordinates.y ),
+		cars[game->current_player].MoveTo( translateCoords(Coord( pointInfo.currentCoordinates.x, pointInfo.currentCoordinates.y )),
 										   !pointInfo.isAlive ); // Рисует ход
 		if( numOfCrushedCar != -1 ) { // Вторая машина отправляется на старт
 			PointsInformation crushedCurPointInfo = game->getPlayersBasePoints( numOfCrushedCar );
-			cars[numOfCrushedCar].MoveTo( Coord( crushedCurPointInfo.currentCoordinates.x, crushedCurPointInfo.currentCoordinates.y ),
+			cars[numOfCrushedCar].MoveTo( translateCoords(Coord( crushedCurPointInfo.currentCoordinates.x, crushedCurPointInfo.currentCoordinates.y )),
 										  !crushedCurPointInfo.isAlive );
 		}
 
@@ -329,8 +339,8 @@ int Drawing::clickButton( int x, int y )
 			Coord c;
 			c.x = pi.currentCoordinates.x;
 			c.y = pi.currentCoordinates.y;
-			cars[i].current_coords = c;
-			cars[i].next_coords = c;
+			cars[i].current_coords = translateCoords(c);
+			cars[i].next_coords = translateCoords( c );
 			cars[i].current_angle = 0;
 		}
 		game->game_ready_to_start = true;

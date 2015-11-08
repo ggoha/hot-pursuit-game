@@ -22,6 +22,7 @@ private:
 	static void mouseButton( int button, int state, int x, int y );
 	static int clickButton( int x, int y );
 	static void display();
+	static Coord Drawing::translateCoords( Coord coord );
 
 	static void OnDeath( int player );
 	static void OnDeathAll();

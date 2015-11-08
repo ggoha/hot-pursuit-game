@@ -39,44 +39,45 @@ Coordinates Player::convertFromDirectionCode( int directionCode )
 {
 	Coordinates direction( 0, 0 );
 	switch( directionCode ) {
-		case 7:
-			direction.x = -1;
-			direction.y = +1;
-			break;
-		case 8:
-			direction.x = 0;
-			direction.y = +1;
-			break;
-		case 9:
-			direction.x = +1;
-			direction.y = +1;
-			break;
-		case 4:
-			direction.x = -1;
-			direction.y = 0;
-			break;
-		case 5:
-			direction.x = 0;
-			direction.y = 0;
-			break;
-		case 6:
-			direction.x = +1;
-			direction.y = 0;
-			break;
-		case 1:
-			direction.x = -1;
-			direction.y = -1;
-			break;
-		case 2:
-			direction.x = 0;
-			direction.y = -1;
-			break;
-		case 3:
-			direction.x = +1;
-			direction.y = -1;
-			break;
-		default:
-			throw std::invalid_argument( "Unknown direction code" );
+	case SW:
+		direction.x = -1;
+		direction.y = +1;
+		break;
+	case S:
+		direction.x = 0;
+		direction.y = +1;
+		break;
+	case SE:
+		direction.x = +1;
+		direction.y = +1;
+		break;
+	case W:
+		direction.x = -1;
+		direction.y = 0;
+		break;
+	case C:
+		direction.x = 0;
+		direction.y = 0;
+		break;
+	case E:
+		direction.x = +1;
+		direction.y = 0;
+		break;
+	case NW:
+		direction.x = -1;
+		direction.y = -1;
+		break;
+	case N:
+		direction.x = 0;
+		direction.y = -1;
+		break;
+	case NE:
+		direction.x = +1;
+		direction.y = -1;
+		break;
+
+	default:
+		throw std::invalid_argument( "Unknown direction code" );
 	}
 	return direction;
 }
