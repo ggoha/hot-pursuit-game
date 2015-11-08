@@ -240,7 +240,7 @@ void Game::initPlayers() {
 void Game::start( int argc, char* argv[] )
 {
 	/*visual start*/
-	Drawing drawing_module(this, map, cars );
+	Drawing drawing_module(this, map.getMapInOpenGLView, cars );
 	drawing_module.draw( argc, argv ); // Main визуализатора
 	/*visual end*/
 
