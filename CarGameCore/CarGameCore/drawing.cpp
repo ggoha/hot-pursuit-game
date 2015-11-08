@@ -49,7 +49,7 @@ void Drawing::display()
 		for( int j = 0; j < cars[0].frames_per_step; j++ ) {
 			map.Draw();
 			for( size_t i = 0; i < cars.size(); i++ ) {
-				if( !game->playerIsAlive(i) ) { // Машина умерла - не рисуем
+				if( !game->playerIsAlive( i ) ) { // Машина умерла - не рисуем
 					continue;
 				}
 				cars[i].Draw( map.Get_cell_size(), map.Get_indent() ); // draw car
@@ -238,11 +238,7 @@ void Drawing::OnWin( int winner )
 	}
 	if( result == 1 ) {
 		// ok
-		game->numOfDeadPlayers = 0;
-		game->numberOfPlayers = 0;
-		game->current_player = 0;
-		game->game_ready_to_start = false;
-		game->clearPlayers();
+		game->resetSettings();
 		menu = true;
 		cars.clear();
 	}
@@ -260,11 +256,7 @@ void Drawing::OnDeathAll()
 	}
 	if( result == 1 ) {
 		// ok
-		game->numOfDeadPlayers = 0;
-		game->numberOfPlayers = 0;
-		game->current_player = 0;
-		game->game_ready_to_start = false;
-		game->clearPlayers();
+		game->resetSettings();
 		menu = true;
 		cars.clear();
 	}
@@ -331,9 +323,9 @@ int Drawing::clickButton( int x, int y )
 		if( x > i*width / size && x < ( i + 1 )*width / size && y > height*0.35 && y < height*0.45 )
 			game->menuChoice[i] = NONE;
 	}
-	game->calculateNumOfPlayers();
 	// Обработка "Далее"
 	if( y < height*0.25 ) { // Нажали "Далее"
+		game->calculateNumOfPlayers();
 		game->initPlayers();
 		initCars();
 		for( int i = 0; i < game->numberOfPlayers; i++ ) {
@@ -369,7 +361,7 @@ void Drawing::mouseButton( int button, int state, int x, int y )
 		}
 }
 
-void Drawing::draw( int argc, char * argv[] )
+void Drawing::startDrawing( int argc, char * argv[] )
 {
 	glutInit( &argc, argv );
 	glutInitDisplayMode( GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA );

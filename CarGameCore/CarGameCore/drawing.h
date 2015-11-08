@@ -14,7 +14,7 @@
 class Drawing {
 public:
 	Drawing( Game* game, Map &map_data );
-	void draw( int argc, char * argv[] );
+	void startDrawing( int argc, char * argv[] );
 	static void Load_texture( const char*, GLuint& texture );
 
 private:

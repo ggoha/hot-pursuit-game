@@ -57,11 +57,7 @@ public:
 	int readPlayersChoice( size_t num );
 
 private:
-	std::map< std::string, TColor > color_dict;
-
 	std::pair<Field, std::vector<Coordinates>> readMap( const int n, const int m, std::ifstream& fin );
 
 	Line readFinishLine( std::ifstream& fin );
-
-	std::vector<Car> readCars( const std::string& carPath );
 };

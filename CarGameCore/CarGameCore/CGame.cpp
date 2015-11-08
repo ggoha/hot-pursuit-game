@@ -1,6 +1,4 @@
 ﻿#include "CGame.h"
-#include "Drawing.h"
-
 
 Game::Game()
 {
@@ -167,9 +165,7 @@ void Game::turnOfPlayer( size_t num, int direction, int& numOfCrushedCar )
 	numOfCrushedCar = playerCrashedIntoCar( num );
 	if( numOfCrushedCar != -1 ) {
 		players[num].goToStart();
-		clearPlayersState( numOfCrushedCar );
 		players[numOfCrushedCar].goToStart();
-		showPlayersState( numOfCrushedCar );
 		return;
 	}
 	if( playerOutOfTrack( num ) ) {
@@ -179,31 +175,6 @@ void Game::turnOfPlayer( size_t num, int direction, int& numOfCrushedCar )
 	}
 	return;
 }
-
-void Game::initPlayersPositionsInMap()
-{
-	for( size_t i = 0; i < players.size(); ++i ) {
-		Coordinates currentCoordinates = players[i].getPosition();
-		map.setPosition( currentCoordinates.x, currentCoordinates.y );
-	}
-}
-
-void Game::clearPlayersState( size_t num ) // Стирает изображение игрока с поля
-{
-	Coordinates old = players[num].getPreviousPosition();
-	Coordinates now = players[num].getPosition();
-	map.clearPosition( old.x, old.y );
-	map.clearPosition( now.x, now.y );
-}
-
-void Game::showPlayersState( size_t num ) // Рисует изображение игрока на поле
-{
-	Coordinates previousCoordinates = players[num].getPreviousPosition();
-	Coordinates currentCoordinates = players[num].getPosition();
-	map.setPosition( previousCoordinates.x, previousCoordinates.y );
-	map.setPosition( currentCoordinates.x, currentCoordinates.y );
-}
-
 
 void Game::initPlayers()
 {
@@ -215,17 +186,11 @@ void Game::initPlayers()
 	}
 }
 
-void Game::clearPlayers()
+void Game::calculateNumOfPlayers() 
 {
-	players.clear();
-}
-
-void Game::calculateNumOfPlayers()
-{
-	numberOfPlayers = 0;
-	for( int i = 0; i < 4; i++ ) {
+	for( size_t i = 0; i < 4; ++i ) {
 		if( menuChoice[i] != NONE ) {
-			numberOfPlayers++;
+			++numberOfPlayers;
 		}
 	}
 }
@@ -233,7 +198,7 @@ void Game::calculateNumOfPlayers()
 void Game::start( int argc, char* argv[] )
 {
 	Drawing drawing_module( this, map );
-	drawing_module.draw( argc, argv ); // Main визуализатора
+	drawing_module.startDrawing( argc, argv ); // Визуализатор
 }
 
 PointsInformation Game::getPlayersBasePoints( size_t num )  // Frontend: Для Frontend'a - получение точек для отрисовки
@@ -253,4 +218,13 @@ PointsInformation Game::getPlayersBasePoints( size_t num )  // Frontend: Для 
 bool Game::playerIsAlive( int player )
 {
 	return players[player].playerIsAlive();
+}
+
+void Game::resetSettings()
+{
+	numOfDeadPlayers = 0;
+	numberOfPlayers = 0;
+	current_player = 0;
+	game_ready_to_start = false;
+	players.clear();
 }
