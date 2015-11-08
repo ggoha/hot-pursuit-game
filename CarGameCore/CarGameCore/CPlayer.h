@@ -70,6 +70,7 @@ public:
 	bool playerIsAlive();
 	void cheat();
 	bool isCheater();
+	bool playerIsAI();
 	void reduceCheat();
 
 private:
@@ -78,6 +79,7 @@ private:
 	Coordinates initial_position; // Для возвращения на старт, после столкновения с машиной
 	Coordinates previous_position;
 	bool isAlive;
+	bool isAI;
 	int cheated;
 
 	void moveInDirection( Coordinates );
