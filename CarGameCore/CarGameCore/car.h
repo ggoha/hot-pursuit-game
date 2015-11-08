@@ -2,7 +2,7 @@
 #pragma once 
 #include "Common.h"
 #include "glut.h"
-enum TColor { Red, Green, Blue, Yellow };
+enum TColor { Red, Blue, Green };
 
 #define PI 3.14159265
 
