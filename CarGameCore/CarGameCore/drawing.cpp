@@ -195,13 +195,15 @@ void Drawing::OnMove( int direction )
 	int winner = game->getPlayerOnFinish();
 	if( winner != -1 ) {
 		OnWin( winner );
+		return;
 	}
 	int currentPlayer = game->current_player;
 	if( game->game_ready_to_start && game->playerIsAlive( currentPlayer ) ) {
 		int numOfCrushedCar;
 		game->turnOfPlayer( currentPlayer, direction, numOfCrushedCar );
 		if( game->numberOfPlayers == game->numOfDeadPlayers ) {
-			OnDeathAll(); 
+			OnDeathAll();
+			return;
 		}
 		PointsInformation pointInfo = game->getPlayersBasePoints( currentPlayer );
 		cars[game->current_player].MoveTo( Coord( pointInfo.currentCoordinates.x, pointInfo.currentCoordinates.y ),
@@ -217,12 +219,12 @@ void Drawing::OnMove( int direction )
 			OnDeath( currentPlayer );
 		}
 
-		++game->current_player;		
+		++game->current_player; // Поиск живых игроков
 		game->current_player %= game->numberOfPlayers;
-		// just debug
-		wchar_t buffer[256];
-		::wsprintf( buffer, L"Сейчас будет ход №%d игрока", game->current_player );
-		::MessageBox( nullptr, buffer, L"kjk!", MB_OK );
+		while( !game->playerIsAlive( game->current_player ) ) {
+			++game->current_player;
+			game->current_player %= game->numberOfPlayers;
+		}
 	}
 }
 
@@ -276,7 +278,9 @@ void Drawing::OnDeath( int currentPlayer )
 {
 	wchar_t buffer[256];
 	::wsprintf( buffer, L"Игрок №%d мертв", currentPlayer + 1 );
-	::MessageBox( nullptr, buffer, L"БАБАХ", MB_OK );
+	if( ::MessageBox( nullptr, buffer, L"Авария", MB_OK ) == 0 ) {
+		throw std::runtime_error( "OnDeathAll: can't show message box" );
+	}
 }
 
 void Drawing::normalKeyHandler( unsigned char key, int x, int y )
@@ -308,9 +312,6 @@ void Drawing::normalKeyHandler( unsigned char key, int x, int y )
 			break;
 		case 51:
 			OnMove( 3 );
-			break;
-		case 27:
-			menu = false;
 			break;
 	}
 }
