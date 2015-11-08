@@ -143,6 +143,7 @@ void Drawing::drawMenu()
 		renderBitmapString( i*width / size, height*0.5, 0, font, "AI" );
 		renderBitmapString( i*width / size, height*0.4, 0, font, "NONE" );
 	}
+	glColor3f(255, 255, 255);
 }
 
 // load image from file to texture
@@ -363,8 +364,21 @@ int Drawing::clickButton( int x, int y )
 
 void Drawing::initCars( std::vector<TColor> colours )
 {
+	int j = 0;
 	for( size_t i = 0; i < game->numberOfPlayers; ++i ) {
-		cars.push_back( Car( colours[i] ) ); // todo: цветовая заглушка
+		if (game->menuChoice[j] != NONE)
+			switch (j)
+			{
+			case 0: cars.push_back(Car(TColor::Red)); break;
+			case 1: cars.push_back(Car(TColor::Green)); break;
+			case 2: cars.push_back(Car(TColor::Blue)); break;
+			case 3: cars.push_back(Car(TColor::Yellow)); break;
+			}
+		else
+			{
+			i--;
+			}
+		j++;
 	}
 	load(); // Загрузка текстур + машинок
 }
