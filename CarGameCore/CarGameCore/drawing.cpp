@@ -356,7 +356,7 @@ int Drawing::clickButton( int x, int y )
 			c.y = pi.currentCoordinates.y;
 			cars[i].current_coords = translateCoords(c);
 			cars[i].next_coords = translateCoords( c );
-			cars[i].current_angle = 0;
+			//cars[i].current_angle = 0;
 		}
 		game->game_ready_to_start = true;
 		return 1;

@@ -8,23 +8,25 @@ enum TColor { Red, Green, Blue, Yellow };
 
 class Car {
 public:
-	Car( std::vector<Coord> &coords_data, int _frames_per_step, TColor _color );
-	Car( std::vector<Coord> &coords_data ) {
+	Car( std::vector<Coord> &coords_data, int _frames_per_step, TColor _color, float inp_start_angle = PI );
+	Car( std::vector<Coord> &coords_data , float inp_start_angle = PI) {
 		coords = coords_data;
 		color = Red;
 		next_coords = Coord();
 		current_coords = Coord();
-		current_angle = 0;
+		start_angle = inp_start_angle;
+		current_angle = start_angle;
 	}
 
-	Car( TColor _color ) {
+	Car( TColor _color, float inp_start_angle = PI ) {
 		color = _color;
 		frames_per_step = 200;
 		current_step = 0;
 		step_iteration = 0;
 		next_coords = Coord();
 		current_coords = Coord();
-		current_angle = 0;
+		start_angle = inp_start_angle;
+		current_angle = start_angle;
 	}
 
 	TColor Get_color() {
@@ -45,6 +47,7 @@ public:
 	Coord current_coords;
 	Coord next_coords;
 	float current_angle;
+	float start_angle;
 private:
 	WCoord transate_to_wcoord( float x, float y, float cell_size, WCoord indent );
 	void rotate( float &x, float &y, float angle );
@@ -55,5 +58,6 @@ private:
 	int current_step;
 	int step_iteration;
 	TColor color;
+
 	
 };

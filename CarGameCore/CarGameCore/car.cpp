@@ -2,12 +2,13 @@
 #include <vector>
 #include "Car.h"
 
-Car::Car( std::vector<Coord> &coords_data, int _frames_per_step, TColor _color = Red )
+Car::Car( std::vector<Coord> &coords_data, int _frames_per_step, TColor _color = Red, float inp_start_angle )
 	: coords( coords_data ), current_step( 0 ), step_iteration( 0 ),
 	color( _color ), frames_per_step( _frames_per_step ) {
 	next_coords = Coord();
 	current_coords = Coord();
-	current_angle = 0;
+	start_angle = inp_start_angle;
+	current_angle = start_angle;
 }
 
 void Car::rotate( float &x, float &y, float angle ) {
@@ -116,7 +117,7 @@ void Car::MoveTo( Coord inp_next_coord, bool crash ) {
 	next_coords = inp_next_coord;
 	if( crash ) {
 		current_coords = inp_next_coord;
-		current_angle = 0;
+		current_angle = start_angle;
 	}
 }
 
