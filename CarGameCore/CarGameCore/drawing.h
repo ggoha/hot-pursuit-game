@@ -14,7 +14,7 @@
 class Drawing {
 public:
 	Drawing( Game* game, Map &map_data );
-	void draw( int argc, char * argv[] );
+	void startDrawing( int argc, char * argv[] );
 	static void Load_texture( const char*, GLuint& texture );
 
 private:
@@ -23,6 +23,9 @@ private:
 	static int clickButton( int x, int y );
 	static void display();
 
+	static void OnDeath( int player );
+	static void OnDeathAll();
+	static void OnWin( int winner );
 	static void drawMenu();
 	static void renderBitmapString( float x, float y, float z, void *font, char *string );
 	static void reshape( int width, int height );

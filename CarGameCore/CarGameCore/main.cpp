@@ -1,6 +1,5 @@
 #include <string>
 #include "CGame.h"
-#include "Drawing.h"
 
 const std::string MAP_PATH = "../map.txt";
 

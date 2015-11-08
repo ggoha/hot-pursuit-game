@@ -2,15 +2,17 @@
 
 Player::Player()
 {
+	isAI = false;
 	isAlive = true;
 	inertia.x = 0;
 	inertia.y = 0;
 	cheated = 0;
 }
 
-Player::Player( const Coordinates& newCoordinates, const bool state ) :
+Player::Player( const Coordinates& newCoordinates, const bool state ):
 	initial_position( newCoordinates ), previous_position( newCoordinates ), position( newCoordinates ), isAlive( state )
 {
+	isAI = false;
 	inertia.x = 0;
 	inertia.y = 0;
 	cheated = 0;
@@ -141,4 +143,9 @@ bool Player::isCheater()
 void Player::reduceCheat()
 {
 	--cheated;
+}
+
+bool Player::playerIsAI()
+{
+	return isAI;
 }

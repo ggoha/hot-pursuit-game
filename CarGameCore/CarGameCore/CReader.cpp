@@ -2,9 +2,6 @@
 
 Reader::Reader()
 {
-	color_dict["Red"] = Red;
-	color_dict["Green"] = Green;
-	color_dict["Blue"] = Blue;
 }
 
 Reader::~Reader()
@@ -45,36 +42,7 @@ MapFileInput Reader::readData( const std::string& mapPath )
 	Size size( n, m );
 	std::pair<Field, std::vector<Coordinates>> gameFieldInfo = readMap( n, m, fin );
 	Line finishLine = readFinishLine( fin );
-	//std::vector<Car> cars = readCars( carPath );
 	return MapFileInput( gameFieldInfo.first, size, gameFieldInfo.second, finishLine );
-}
-
-std::vector<Car> Reader::readCars( const std::string& carPath )
-{
-	std::ifstream input( carPath );
-	if( !input ) {
-		std::string error = "Can't open file ";
-		error += carPath;
-		throw std::runtime_error( error );
-	}
-	int n = 0;
-	int number_of_steps = 0;
-	std::string color = "";
-	input >> n;
-	std::vector<Car> cars;
-	for( int i = 0; i < n; ++i ) {
-		input >> color;
-		input >> number_of_steps; // should it be the same for all cars?
-		Car car( color_dict[color] );
-		for( int j = 0; j < number_of_steps; ++j ) {
-			Coord step;
-			input >> step.x >> step.y;
-			car.Push( step );
-		}
-		car.Calculate_angles();
-		cars.push_back( car );
-	}
-	return cars;
 }
 
 Line Reader::readFinishLine( std::ifstream& input )
@@ -134,7 +102,6 @@ PlayersInfo Reader::readPlayers()
 	info.numberOfPlayers = numberOfPlayers;
 	return info;
 }
-
 
 int Reader::readPlayersChoice( size_t num )
 {
