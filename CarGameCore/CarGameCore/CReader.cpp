@@ -48,21 +48,21 @@ MapFileInput Reader::readData( const std::string& mapPath )
 
 void Reader::addFinishLine(std::pair<Field, std::vector<Coordinates>>* gameFieldInfo, Line finishLine)
 {
-	gameFieldInfo->first[finishLine.firstPoint.x][finishLine.firstPoint.y] = 3;
-	gameFieldInfo->first[finishLine.secondPoint.x][finishLine.secondPoint.y] = 3;
+	gameFieldInfo->first[finishLine.firstPoint.y][finishLine.firstPoint.x] = 3;
+	gameFieldInfo->first[finishLine.secondPoint.y][finishLine.secondPoint.x] = 3;
 	if (finishLine.firstPoint.y == finishLine.secondPoint.y)
 	{
 		int min = std::min(finishLine.firstPoint.x, finishLine.secondPoint.x);
 		int max = std::max(finishLine.firstPoint.x, finishLine.secondPoint.x);
 		for (int i = min; i < max; i++)
-			gameFieldInfo->first[i][finishLine.secondPoint.y] = 3;
+			gameFieldInfo->first[finishLine.secondPoint.y][i] = 3;
 	}
 	if (finishLine.firstPoint.x == finishLine.secondPoint.x)
 	{
 		int min = std::min(finishLine.firstPoint.y, finishLine.secondPoint.y);
 		int max = std::max(finishLine.firstPoint.y, finishLine.secondPoint.y);
 		for (int i = min; i < max; i++)
-			gameFieldInfo->first[finishLine.secondPoint.x][i] = 3;
+			gameFieldInfo->first[i][finishLine.secondPoint.x] = 3;
 	}
 }
 
