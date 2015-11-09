@@ -134,7 +134,7 @@ void Drawing::drawMenu()
 			case( 0 ) : glColor3f( 1.0, 0.0, 0.0 ); break;
 			case( 1 ) : glColor3f( 0.0, 1.0, 0.0 ); break;
 			case( 2 ) : glColor3f( 0.0, 0.0, 1.0 ); break;
-			case( 3 ) : glColor3f( 1.0, 1.0, 0.0 ); break;
+			case( 3 ) : glColor3f( 1.0, 0.5, 0.0 ); break;
 		};
 		char str[2];
 		itoa( i + 1, str, 10 );
