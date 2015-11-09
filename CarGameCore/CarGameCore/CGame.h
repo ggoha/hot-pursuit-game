@@ -55,6 +55,7 @@ public:
 	int getPlayerOnFinish();
 	void resetSettings();
 	void toNextPlayer();
+	bool playerIsAI( int player );
 
 private:
 	Map map;

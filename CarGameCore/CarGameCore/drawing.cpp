@@ -209,8 +209,14 @@ void Drawing::OnMove( int direction )
 {
 	int currentPlayer = game->current_player;
 	if( game->game_ready_to_start && game->playerIsAlive( currentPlayer ) ) {
+		if( game->playerIsAI( currentPlayer ) ) {
+			// todo: using AI dll
+		}
+		// else:
 		int numOfCrushedCar;
 		game->turnOfPlayer( currentPlayer, direction, numOfCrushedCar );
+		// endelse
+
 		if( game->numberOfPlayers == game->numOfDeadPlayers ) {
 			OnDeathAll();
 			return;
@@ -317,6 +323,8 @@ void Drawing::normalKeyHandler( unsigned char key, int x, int y )
 		case 51:
 			OnMove( 3 );
 			break;
+		case 27:
+			exit( 0 );
 	}
 }
 

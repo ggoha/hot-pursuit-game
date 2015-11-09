@@ -187,7 +187,7 @@ void Game::initPlayers()
 	}
 }
 
-void Game::calculateNumOfPlayers() 
+void Game::calculateNumOfPlayers()
 {
 	for( size_t i = 0; i < 4; ++i ) {
 		if( menuChoice[i] != NONE ) {
@@ -198,7 +198,7 @@ void Game::calculateNumOfPlayers()
 
 void Game::start( int argc, char* argv[] )
 {
-	Drawing drawing_module( this,  map.getMapInOpenGLView() );
+	Drawing drawing_module( this, map.getMapInOpenGLView() );
 	drawing_module.startDrawing( argc, argv ); // Визуализатор
 }
 
@@ -238,4 +238,9 @@ void Game::toNextPlayer()
 		++current_player;
 		current_player %= numberOfPlayers;
 	}
+}
+
+bool Game::playerIsAI( int player )
+{
+	return players[player].playerIsAI();
 }
