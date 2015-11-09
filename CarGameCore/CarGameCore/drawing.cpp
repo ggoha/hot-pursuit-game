@@ -207,11 +207,6 @@ Coord Drawing::translateCoords(Coord coord){
 
 void Drawing::OnMove( int direction )
 {
-	int winner = game->getPlayerOnFinish();
-	if( winner != -1 ) {
-		OnWin( winner );
-		return;
-	}
 	int currentPlayer = game->current_player;
 	if( game->game_ready_to_start && game->playerIsAlive( currentPlayer ) ) {
 		int numOfCrushedCar;
@@ -237,6 +232,11 @@ void Drawing::OnMove( int direction )
 		}
 
 		game->toNextPlayer();
+	}
+	int winner = game->getPlayerOnFinish();
+	if( winner != -1 ) {
+		OnWin( winner );
+		return;
 	}
 }
 
